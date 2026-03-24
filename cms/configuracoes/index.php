@@ -12,6 +12,7 @@ $active     = 'config_smtp';
 $pdo        = db();
 $errors     = [];
 $tab        = $_GET['tab'] ?? 'smtp';
+$valid_tabs = ['smtp', 'header', 'ia'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_verify();
@@ -33,6 +34,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: ' . CMS_URL . '/configuracoes/?tab=header');
         exit;
     }
+
+    if ($saved_tab === 'ia') {
+        $key = trim($_POST['openai_key'] ?? '');
+        if ($key !== '') setting_save('openai_key', $key);
+        setting_save('openai_model', trim($_POST['openai_model'] ?? 'gpt-4o'));
+        flash_set('success', 'Configurações de IA salvas.');
+        header('Location: ' . CMS_URL . '/configuracoes/?tab=ia');
+        exit;
+    }
 }
 
 require_once dirname(__DIR__) . '/includes/head.php';
@@ -48,6 +58,7 @@ require_once dirname(__DIR__) . '/includes/head.php';
 <div class="tabs">
   <a href="?tab=smtp"   class="tab <?= $tab === 'smtp'   ? 'active' : '' ?>">E-mail / SMTP</a>
   <a href="?tab=header" class="tab <?= $tab === 'header' ? 'active' : '' ?>">Códigos do Cabeçalho</a>
+  <a href="?tab=ia"     class="tab <?= $tab === 'ia'     ? 'active' : '' ?>">Inteligência Artificial</a>
 </div>
 
 <?php if ($tab === 'smtp'): ?>
@@ -146,6 +157,47 @@ require_once dirname(__DIR__) . '/includes/head.php';
     <button type="submit" class="btn btn-primary">
       <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
       Salvar Códigos
+    </button>
+  </div>
+</form>
+<?php elseif ($tab === 'ia'): ?>
+<!-- ── IA ── -->
+<form method="POST" novalidate>
+  <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
+  <input type="hidden" name="tab" value="ia">
+
+  <div class="adm-card">
+    <div class="adm-card__header">
+      <span class="adm-card__title">OpenAI — Configuração</span>
+    </div>
+    <div class="adm-card__body">
+      <div class="form-grid">
+
+        <div class="form-group form-group--full">
+          <label>Chave de API (OpenAI)</label>
+          <input type="password" name="openai_key"
+                 value="<?= h(setting('openai_key')) ?>"
+                 placeholder="sk-proj-...">
+          <span class="form-hint">Deixe em branco para manter a chave atual. Usada no editor de páginas com IA.</span>
+        </div>
+
+        <div class="form-group">
+          <label>Modelo</label>
+          <select name="openai_model">
+            <?php foreach (['gpt-4o','gpt-4o-mini','gpt-4-turbo','gpt-3.5-turbo'] as $m): ?>
+            <option value="<?= $m ?>" <?= setting('openai_model','gpt-4o') === $m ? 'selected' : '' ?>><?= $m ?></option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Salvar IA
     </button>
   </div>
 </form>

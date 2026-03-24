@@ -43,7 +43,7 @@ require_once dirname(__DIR__) . '/includes/head.php';
           <th>URL</th>
           <th>Arquivo PHP</th>
           <th>Status</th>
-          <th>Criado em</th>
+          <th style="text-align:right">Ações</th>
         </tr>
       </thead>
       <tbody>
@@ -52,7 +52,7 @@ require_once dirname(__DIR__) . '/includes/head.php';
           <td style="font-weight:600;color:#fff"><?= h($pg['title']) ?></td>
           <td>
             <?php if ($pg['url']): ?>
-            <a href="<?= SITE_URL . h($pg['url']) ?>" target="_blank" style="color:var(--a-primary)">
+            <a href="<?= h($pg['url']) ?>" target="_blank" style="color:var(--a-primary)">
               <?= h($pg['url']) ?>
               <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align:middle;margin-left:2px"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
             </a>
@@ -60,9 +60,20 @@ require_once dirname(__DIR__) . '/includes/head.php';
             <span class="text-muted">—</span>
             <?php endif; ?>
           </td>
-          <td><code style="font-size:0.8125rem;color:var(--a-muted)"><?= h($pg['file_path']) ?></code></td>
+          <td><code style="font-size:0.8125rem;color:var(--a-muted)"><?= h(basename($pg['file_path'])) ?></code></td>
           <td><span class="badge badge--<?= h($pg['status']) ?>"><?= h($pg['status']) ?></span></td>
-          <td><?= format_date($pg['created_at']) ?></td>
+          <td class="actions">
+            <?php if ($pg['file_path'] && file_exists($pg['file_path'])): ?>
+            <a href="<?= CMS_URL ?>/paginas/edit-ai.php?id=<?= (int)$pg['id'] ?>"
+               class="btn btn-primary btn-sm"
+               style="background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07M8.46 8.46a5 5 0 0 0 0 7.07"/></svg>
+              Alterar com IA
+            </a>
+            <?php else: ?>
+            <span class="text-muted fs-xs">arquivo não encontrado</span>
+            <?php endif; ?>
+          </td>
         </tr>
         <?php endforeach; ?>
       </tbody>

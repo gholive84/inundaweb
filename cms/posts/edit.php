@@ -21,6 +21,7 @@ if (!$is_new) {
 
 $page_title = $is_new ? 'Novo Post' : 'Editar Post';
 $active     = 'posts';
+define('USE_QUILL', true);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_verify();
@@ -163,9 +164,9 @@ require_once dirname(__DIR__) . '/includes/head.php';
         </div>
 
         <div class="form-group form-group--full">
-          <label for="content">Conteúdo</label>
-          <textarea id="content" name="content" style="min-height:400px"
-                    placeholder="Conteúdo completo do post (HTML permitido)"><?= h($post['content'] ?? '') ?></textarea>
+          <label>Conteúdo</label>
+          <div id="quill-editor" style="min-height:380px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#e2e8f0"></div>
+          <input type="hidden" id="content" name="content">
         </div>
 
       </div>

@@ -118,8 +118,37 @@ if (contactForm) {
         const v3 = validate(phone, v => v.replace(/\D/g,'').length >= 10);
 
         if (v1 && v2 && v3) {
-            contactForm.querySelector('.contact-form__fields').style.display = 'none';
-            document.getElementById('formSuccess').classList.add('visible');
+            const btn = contactForm.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.textContent = 'Enviando...';
+
+            fetch('/cms/leads/submit.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nome:     name.value.trim(),
+                    email:    email.value.trim(),
+                    telefone: phone.value.trim(),
+                    mensagem: '',
+                    origem:   'formulario-site'
+                })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.ok) {
+                    contactForm.querySelector('.contact-form__fields').style.display = 'none';
+                    document.getElementById('formSuccess').classList.add('visible');
+                } else {
+                    btn.disabled = false;
+                    btn.textContent = 'Enviar mensagem';
+                    alert(data.error || 'Erro ao enviar. Tente novamente.');
+                }
+            })
+            .catch(() => {
+                btn.disabled = false;
+                btn.textContent = 'Enviar mensagem';
+                alert('Erro de conexão. Tente novamente.');
+            });
         }
     });
 }
