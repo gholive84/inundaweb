@@ -7,14 +7,14 @@ include $root . '/site/includes/header.php';
 ?>
 
 <!-- HERO -->
-<section class="page-hero">
+<section class="page-hero page-hero--ia">
     <div class="page-hero__bg"></div>
     <div class="container page-hero__content">
         <a href="/" class="back-link">
             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
             Voltar para o início
         </a>
-        <span class="label label--ia">Novo serviço</span>
+        <span class="label">ia code</span>
         <h1 class="page-hero__title">
             Sites premium feitos<br>com <span class="text--gradient">Inteligência Artificial</span>
         </h1>

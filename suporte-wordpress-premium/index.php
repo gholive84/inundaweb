@@ -7,7 +7,7 @@ include $root . '/site/includes/header.php';
 ?>
 
 <!-- HERO -->
-<section class="page-hero">
+<section class="page-hero page-hero--suporte">
     <div class="page-hero__bg page-hero__bg--support"></div>
     <div class="container page-hero__content">
         <a href="/" class="back-link">
