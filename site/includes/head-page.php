@@ -11,14 +11,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Styles -->
-    <link rel="stylesheet" href="/site/assets/css/reset.css">
-    <link rel="stylesheet" href="/site/assets/css/variables.css">
-    <link rel="stylesheet" href="/site/assets/css/global.css">
-    <link rel="stylesheet" href="/site/assets/css/components.css">
-    <link rel="stylesheet" href="/site/assets/css/sections.css">
-    <link rel="stylesheet" href="/site/assets/css/inner-pages.css">
-    <link rel="stylesheet" href="/site/assets/css/responsive.css">
+    <!-- Styles (v= usa data de modificação do arquivo como cache buster) -->
+    <?php
+    $css_files = ['reset','variables','global','components','sections','inner-pages','responsive'];
+    $css_base  = $_SERVER['DOCUMENT_ROOT'] . '/site/assets/css/';
+    foreach ($css_files as $f) {
+        $path = $css_base . $f . '.css';
+        $v    = file_exists($path) ? filemtime($path) : time();
+        echo "<link rel=\"stylesheet\" href=\"/site/assets/css/{$f}.css?v={$v}\">\n    ";
+    }
+    ?>
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/site/assets/img/favicon.svg">

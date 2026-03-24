@@ -58,6 +58,10 @@
     </svg>
 </a>
 
-<script src="/site/assets/js/main.js"></script>
+<?php
+$js_path = $_SERVER['DOCUMENT_ROOT'] . '/site/assets/js/main.js';
+$js_v    = file_exists($js_path) ? filemtime($js_path) : time();
+echo "<script src=\"/site/assets/js/main.js?v={$js_v}\"></script>";
+?>
 </body>
 </html>
