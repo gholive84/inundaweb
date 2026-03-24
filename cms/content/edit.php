@@ -22,7 +22,9 @@ if (!$type) {
     exit;
 }
 
-$fields_schema = json_decode($type['fields_schema'], true) ?: [];
+$raw_schema    = $type['fields_schema'] ?? '[]';
+if (is_array($raw_schema)) $raw_schema = json_encode($raw_schema); // MySQL JSON col returns array in some drivers
+$fields_schema = json_decode($raw_schema, true) ?: [];
 $item          = null;
 $fields_data   = [];
 $errors        = [];
@@ -171,12 +173,35 @@ require_once dirname(__DIR__) . '/includes/head.php';
               <?= h($lbl) ?>
             </label>
           <?php elseif ($ftype === 'image'): ?>
-            <input type="url" id="field_<?= h($key) ?>" name="field_<?= h($key) ?>"
-                   value="<?= h($val) ?>"
-                   placeholder="https://..."
-                   data-preview="prev_<?= h($key) ?>">
+            <div style="display:flex;gap:8px;align-items:center">
+              <input type="text" id="field_<?= h($key) ?>" name="field_<?= h($key) ?>"
+                     value="<?= h($val) ?>"
+                     placeholder="https://... ou use o botão Upload"
+                     data-preview="prev_<?= h($key) ?>" style="flex:1">
+              <button type="button" class="btn btn-secondary btn-sm"
+                      data-upload-for="field_<?= h($key) ?>"
+                      data-upload-preview="prev_<?= h($key) ?>">
+                ↑ Upload
+              </button>
+            </div>
             <img id="prev_<?= h($key) ?>" src="<?= h($val) ?>" alt=""
                  class="img-preview" style="<?= $val ? '' : 'display:none;' ?>margin-top:8px">
+          <?php elseif ($ftype === 'file'): ?>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input type="text" id="field_<?= h($key) ?>" name="field_<?= h($key) ?>"
+                     value="<?= h($val) ?>"
+                     placeholder="URL do arquivo ou use Upload"
+                     style="flex:1">
+              <button type="button" class="btn btn-secondary btn-sm"
+                      data-upload-for="field_<?= h($key) ?>">
+                ↑ Upload
+              </button>
+            </div>
+            <?php if ($val): ?>
+            <a href="<?= h($val) ?>" target="_blank" style="font-size:.75rem;color:var(--a-primary);margin-top:4px;display:inline-block">
+              📎 Ver arquivo atual
+            </a>
+            <?php endif; ?>
           <?php elseif ($ftype === 'number'): ?>
             <input type="number" id="field_<?= h($key) ?>" name="field_<?= h($key) ?>"
                    value="<?= h($val) ?>">

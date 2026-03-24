@@ -23,7 +23,9 @@ if (!$is_new) {
         header('Location: ' . CMS_URL . '/configuracoes/tipos/');
         exit;
     }
-    $fields_schema = json_decode($type['fields_schema'] ?? '[]', true) ?: [];
+    $raw_schema    = $type['fields_schema'] ?? '[]';
+    if (is_array($raw_schema)) $raw_schema = json_encode($raw_schema);
+    $fields_schema = json_decode($raw_schema, true) ?: [];
 }
 
 $page_title = $is_new ? 'Novo Tipo de Conteúdo' : 'Editar Tipo';
@@ -144,7 +146,7 @@ require_once dirname(dirname(__DIR__)) . '/includes/head.php';
             <label>Tipo</label>
             <select name="fields[type][]">
               <?php
-              $ftypes_opts = ['text'=>'Texto','textarea'=>'Área de texto','number'=>'Número','url'=>'URL','image'=>'Imagem (URL)','date'=>'Data','checkbox'=>'Checkbox'];
+              $ftypes_opts = ['text'=>'Texto','textarea'=>'Área de texto','number'=>'Número','url'=>'URL','image'=>'Imagem (upload)','file'=>'Arquivo (upload)','date'=>'Data (calendário)','checkbox'=>'Checkbox'];
               foreach ($ftypes_opts as $val => $lbl): ?>
               <option value="<?= $val ?>" <?= ($field['type'] ?? 'text') === $val ? 'selected' : '' ?>><?= $lbl ?></option>
               <?php endforeach; ?>

@@ -23,7 +23,7 @@ $total->execute($params);
 $total  = (int)$total->fetchColumn();
 $pages  = max(1, (int)ceil($total / $per_page));
 
-$stmt = $pdo->prepare("SELECT id, title, image_url, category, status, created_at FROM posts $where ORDER BY created_at DESC LIMIT $per_page OFFSET $offset");
+$stmt = $pdo->prepare("SELECT id, title, slug, image_url, category, status, created_at FROM posts $where ORDER BY created_at DESC LIMIT $per_page OFFSET $offset");
 $stmt->execute($params);
 $posts = $stmt->fetchAll();
 
@@ -85,6 +85,14 @@ require_once dirname(__DIR__) . '/includes/head.php';
           </td>
           <td>
             <span style="font-weight:600;color:#fff"><?= h($post['title']) ?></span>
+            <?php if ($post['status'] === 'published' && $post['slug']): ?>
+            <a href="/blog/?post=<?= h($post['slug']) ?>" target="_blank"
+               style="display:inline-flex;align-items:center;gap:3px;font-size:.7rem;color:var(--a-primary);margin-left:6px;text-decoration:none"
+               title="Ver post no site">
+              <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              Ver
+            </a>
+            <?php endif; ?>
           </td>
           <td><?= h($post['category'] ?? '—') ?></td>
           <td><span class="badge badge--<?= h($post['status']) ?>"><?= h($post['status']) ?></span></td>

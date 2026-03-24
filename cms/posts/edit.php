@@ -140,21 +140,19 @@ require_once dirname(__DIR__) . '/includes/head.php';
         </div>
 
         <div class="form-group form-group--full">
-          <label for="image_url">URL da Imagem</label>
-          <input type="url" id="image_url" name="image_url"
-                 value="<?= h($post['image_url'] ?? '') ?>"
-                 placeholder="https://..."
-                 data-preview="img_preview">
-          <?php if (!empty($post['image_url'])): ?>
-          <div class="img-preview-wrap">
-            <img id="img_preview" src="<?= h($post['image_url']) ?>" alt="Preview" class="img-preview"
-                 style="margin-top:8px">
+          <label for="image_url">Imagem</label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="text" id="image_url" name="image_url"
+                   value="<?= h($post['image_url'] ?? '') ?>"
+                   placeholder="https://... ou use o botão Upload"
+                   data-preview="img_preview" style="flex:1">
+            <button type="button" class="btn btn-secondary btn-sm"
+                    data-upload-for="image_url" data-upload-preview="img_preview">
+              ↑ Upload
+            </button>
           </div>
-          <?php else: ?>
-          <div class="img-preview-wrap">
-            <img id="img_preview" src="" alt="Preview" class="img-preview" style="display:none;margin-top:8px">
-          </div>
-          <?php endif; ?>
+          <img id="img_preview" src="<?= h($post['image_url'] ?? '') ?>" alt="Preview"
+               class="img-preview" style="margin-top:8px;<?= empty($post['image_url']) ? 'display:none' : '' ?>">
         </div>
 
         <div class="form-group form-group--full">

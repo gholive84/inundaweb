@@ -83,8 +83,9 @@ if (fieldsBuilder && addFieldBtn) {
                     <option value="textarea">Área de texto</option>
                     <option value="number">Número</option>
                     <option value="url">URL</option>
-                    <option value="image">Imagem (URL)</option>
-                    <option value="date">Data</option>
+                    <option value="image">Imagem (upload)</option>
+                    <option value="file">Arquivo (upload)</option>
+                    <option value="date">Data (calendário)</option>
                     <option value="select">Select</option>
                     <option value="checkbox">Checkbox</option>
                 </select>
@@ -121,6 +122,59 @@ document.querySelectorAll('.lead-status-select').forEach(sel => {
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             body: `id=${id}&status=${status}&csrf_token=${document.querySelector('meta[name=csrf]')?.content ?? ''}`
         });
+    });
+});
+
+// ── File Upload ──────────────────────────────────────────────────────────────
+function uploadFile(inputId, previewId) {
+    const picker = document.createElement('input');
+    picker.type = 'file';
+    picker.accept = 'image/*,.pdf,.doc,.docx';
+    picker.style.display = 'none';
+    document.body.appendChild(picker);
+    picker.click();
+    picker.addEventListener('change', async () => {
+        if (!picker.files.length) return;
+        const file = picker.files[0];
+        const csrf = document.querySelector('meta[name=csrf]')?.content ?? '';
+        const fd = new FormData();
+        fd.append('file', file);
+        fd.append('csrf_token', csrf);
+
+        const btn = document.querySelector(`[data-upload-for="${inputId}"]`);
+        if (btn) { btn.disabled = true; btn.textContent = 'Enviando…'; }
+
+        try {
+            const res = await fetch('/cms/upload.php', { method: 'POST', body: fd });
+            const data = await res.json();
+            if (data.ok) {
+                const inp = document.getElementById(inputId);
+                if (inp) {
+                    inp.value = data.url;
+                    inp.dispatchEvent(new Event('input'));
+                }
+                if (previewId) {
+                    const img = document.getElementById(previewId);
+                    if (img) { img.src = data.url; img.style.display = 'block'; }
+                }
+            } else {
+                alert('Erro no upload: ' + (data.error || 'Falha desconhecida'));
+            }
+        } catch (e) {
+            alert('Erro de conexão no upload.');
+        }
+        if (btn) { btn.disabled = false; btn.textContent = '↑ Upload'; }
+        document.body.removeChild(picker);
+    });
+}
+
+// Attach upload buttons
+document.querySelectorAll('[data-upload-for]').forEach(btn => {
+    btn.addEventListener('click', e => {
+        e.preventDefault();
+        const inputId   = btn.dataset.uploadFor;
+        const previewId = btn.dataset.uploadPreview ?? null;
+        uploadFile(inputId, previewId);
     });
 });
 
