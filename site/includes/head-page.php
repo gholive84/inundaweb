@@ -24,5 +24,23 @@
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/site/assets/img/favicon.svg">
+
+    <!-- Bibliotecas JS gerenciadas via CMS (CSS) -->
+    <?php
+    try {
+        if (!function_exists('db')) {
+            $cms_boot = $_SERVER['DOCUMENT_ROOT'] . '/cms/boot.php';
+            if (file_exists($cms_boot)) require_once $cms_boot;
+        }
+        if (function_exists('setting')) {
+            $site_libs = json_decode(setting('site_libraries', '[]'), true) ?: [];
+            foreach ($site_libs as $lib) {
+                if (!empty($lib['css'])) {
+                    echo '<link rel="stylesheet" href="' . htmlspecialchars($lib['css'], ENT_QUOTES) . '">' . "\n    ";
+                }
+            }
+        }
+    } catch (Exception $e) {}
+    ?>
 </head>
 <body>

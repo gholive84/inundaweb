@@ -25,6 +25,20 @@
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/site/assets/img/favicon.svg">
 
+    <!-- Bibliotecas JS gerenciadas via CMS (CSS) -->
+    <?php
+    try {
+        if (function_exists('setting')) {
+            $site_libs = json_decode(setting('site_libraries', '[]'), true) ?: [];
+            foreach ($site_libs as $lib) {
+                if (!empty($lib['css'])) {
+                    echo '<link rel="stylesheet" href="' . htmlspecialchars($lib['css'], ENT_QUOTES) . '">' . "\n    ";
+                }
+            }
+        }
+    } catch (Exception $e) {}
+    ?>
+
     <!-- Códigos de cabeçalho (Analytics, GTM, etc.) gerenciados via CMS -->
     <?php
     try {

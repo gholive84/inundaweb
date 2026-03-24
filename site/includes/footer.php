@@ -62,7 +62,19 @@
 <?php
 $js_path = $_SERVER['DOCUMENT_ROOT'] . '/site/assets/js/main.js';
 $js_v    = file_exists($js_path) ? filemtime($js_path) : time();
-echo "<script src=\"/site/assets/js/main.js?v={$js_v}\"></script>";
+echo "<script src=\"/site/assets/js/main.js?v={$js_v}\"></script>\n";
+
+// Bibliotecas JS gerenciadas via CMS
+try {
+    if (function_exists('setting')) {
+        $site_libs = json_decode(setting('site_libraries', '[]'), true) ?: [];
+        foreach ($site_libs as $lib) {
+            if (!empty($lib['js'])) {
+                echo '<script src="' . htmlspecialchars($lib['js'], ENT_QUOTES) . '"></script>' . "\n";
+            }
+        }
+    }
+} catch (Exception $e) {}
 ?>
 </body>
 </html>

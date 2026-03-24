@@ -12,7 +12,7 @@ $active     = 'config_smtp';
 $pdo        = db();
 $errors     = [];
 $tab        = $_GET['tab'] ?? 'smtp';
-$valid_tabs = ['smtp', 'header', 'ia'];
+$valid_tabs = ['smtp', 'header', 'ia', 'libs'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_verify();
@@ -32,6 +32,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         setting_save('header_codes', $_POST['header_codes'] ?? '');
         flash_set('success', 'Códigos de cabeçalho salvos.');
         header('Location: ' . CMS_URL . '/configuracoes/?tab=header');
+        exit;
+    }
+
+    if ($saved_tab === 'libs') {
+        $libs_raw = $_POST['libs_json'] ?? '[]';
+        $libs = json_decode($libs_raw, true);
+        if (!is_array($libs)) $libs = [];
+        // sanitize
+        $libs = array_values(array_filter(array_map(function($l) {
+            return [
+                'name' => trim($l['name'] ?? ''),
+                'desc' => trim($l['desc'] ?? ''),
+                'css'  => trim($l['css']  ?? ''),
+                'js'   => trim($l['js']   ?? ''),
+            ];
+        }, $libs), fn($l) => $l['name'] !== ''));
+        setting_save('site_libraries', json_encode($libs));
+        flash_set('success', 'Bibliotecas salvas.');
+        header('Location: ' . CMS_URL . '/configuracoes/?tab=libs');
         exit;
     }
 
@@ -59,6 +78,7 @@ require_once dirname(__DIR__) . '/includes/head.php';
 <div class="tabs">
   <a href="?tab=smtp"   class="tab <?= $tab === 'smtp'   ? 'active' : '' ?>">E-mail / SMTP</a>
   <a href="?tab=header" class="tab <?= $tab === 'header' ? 'active' : '' ?>">Códigos do Cabeçalho</a>
+  <a href="?tab=libs"   class="tab <?= $tab === 'libs'   ? 'active' : '' ?>">Bibliotecas JS</a>
   <a href="?tab=ia"     class="tab <?= $tab === 'ia'     ? 'active' : '' ?>">Inteligência Artificial</a>
 </div>
 
@@ -161,6 +181,138 @@ require_once dirname(__DIR__) . '/includes/head.php';
     </button>
   </div>
 </form>
+<?php elseif ($tab === 'libs'): ?>
+<!-- ── Bibliotecas JS ── -->
+<?php
+$libs_json = setting('site_libraries', '[]');
+$libs = json_decode($libs_json, true) ?: [];
+?>
+<form method="POST" novalidate id="libsForm">
+  <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
+  <input type="hidden" name="tab" value="libs">
+  <input type="hidden" name="libs_json" id="libsJson" value="<?= h(json_encode($libs)) ?>">
+
+  <div class="adm-card">
+    <div class="adm-card__header">
+      <span class="adm-card__title">Bibliotecas JS globais</span>
+    </div>
+    <div class="adm-card__body">
+
+      <div class="flash flash--info" style="margin-bottom:20px;font-size:.8125rem">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        As libs adicionadas aqui são injetadas automaticamente em <strong>todas as páginas do site</strong> (CSS no &lt;head&gt;, JS antes do &lt;/body&gt;) <strong>e</strong> no contexto da IA.
+      </div>
+
+      <div id="libsList" style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px"></div>
+
+      <div style="border:1px dashed var(--a-border);border-radius:10px;padding:16px">
+        <p style="font-size:.8125rem;font-weight:600;color:rgba(255,255,255,.6);margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em">Adicionar biblioteca</p>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nome <span style="color:#ef4444">*</span></label>
+            <input type="text" id="newName" placeholder="Ex: Swiper.js v11">
+          </div>
+          <div class="form-group">
+            <label>Descrição</label>
+            <input type="text" id="newDesc" placeholder="Ex: Carrosséis e sliders">
+          </div>
+          <div class="form-group">
+            <label>URL do CSS (opcional)</label>
+            <input type="url" id="newCss" placeholder="https://cdn.../swiper-bundle.min.css">
+          </div>
+          <div class="form-group">
+            <label>URL do JS</label>
+            <input type="url" id="newJs" placeholder="https://cdn.../swiper-bundle.min.js">
+          </div>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="addLib()">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Adicionar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Salvar Bibliotecas
+    </button>
+  </div>
+</form>
+
+<style>
+.lib-card {
+  background: var(--a-card-2);
+  border: 1px solid var(--a-border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.lib-card__info { flex: 1; min-width: 0; }
+.lib-card__name { font-size: .875rem; font-weight: 600; color: #fff; }
+.lib-card__desc { font-size: .75rem; color: var(--a-muted); margin-top: 2px; }
+.lib-card__urls { font-size: .7rem; color: var(--a-primary); margin-top: 4px; word-break: break-all; }
+</style>
+
+<script>
+let libs = <?= $libs_json ?: '[]' ?>;
+
+function renderLibs() {
+    const el = document.getElementById('libsList');
+    if (!libs.length) {
+        el.innerHTML = '<p style="font-size:.8rem;color:var(--a-muted)">Nenhuma biblioteca adicionada ainda.</p>';
+        return;
+    }
+    el.innerHTML = libs.map((l, i) => `
+        <div class="lib-card">
+            <div class="lib-card__info">
+                <div class="lib-card__name">${esc(l.name)}</div>
+                ${l.desc ? `<div class="lib-card__desc">${esc(l.desc)}</div>` : ''}
+                <div class="lib-card__urls">
+                    ${l.css ? `CSS: ${esc(l.css)}<br>` : ''}
+                    ${l.js  ? `JS: ${esc(l.js)}` : ''}
+                </div>
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm"
+                    onclick="removeLib(${i})" title="Remover">
+                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+            </button>
+        </div>
+    `).join('');
+    document.getElementById('libsJson').value = JSON.stringify(libs);
+}
+
+function addLib() {
+    const name = document.getElementById('newName').value.trim();
+    if (!name) { alert('Informe o nome da biblioteca.'); return; }
+    libs.push({
+        name,
+        desc: document.getElementById('newDesc').value.trim(),
+        css:  document.getElementById('newCss').value.trim(),
+        js:   document.getElementById('newJs').value.trim(),
+    });
+    document.getElementById('newName').value = '';
+    document.getElementById('newDesc').value = '';
+    document.getElementById('newCss').value  = '';
+    document.getElementById('newJs').value   = '';
+    renderLibs();
+}
+
+function removeLib(i) {
+    libs.splice(i, 1);
+    renderLibs();
+}
+
+function esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+renderLibs();
+</script>
+
 <?php elseif ($tab === 'ia'): ?>
 <!-- ── IA ── -->
 <form method="POST" novalidate>

@@ -77,6 +77,18 @@ if ($site_context !== '') {
     $system_prompt .= "\n\n" . $site_context;
 }
 
+// Append managed JS libraries (injected in site head/footer — AI must know they're available)
+$site_libs = json_decode(setting('site_libraries', '[]'), true) ?: [];
+if (!empty($site_libs)) {
+    $lib_ctx = "\n\n## Bibliotecas JS carregadas globalmente no site (disponíveis em todas as páginas)\n";
+    foreach ($site_libs as $lib) {
+        $lib_ctx .= "- **{$lib['name']}**" . (!empty($lib['desc']) ? ": {$lib['desc']}" : '') . "\n";
+        if (!empty($lib['css'])) $lib_ctx .= "  CSS CDN: {$lib['css']}\n";
+        if (!empty($lib['js']))  $lib_ctx .= "  JS CDN: {$lib['js']}\n";
+    }
+    $system_prompt .= $lib_ctx;
+}
+
 // Append additional context from CMS settings (user-defined overrides/complements)
 if ($extra_context !== '') {
     $system_prompt .= "\n\n## Contexto adicional (configurado pelo usuário):\n" . $extra_context;
