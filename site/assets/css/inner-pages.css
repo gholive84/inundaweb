@@ -20,7 +20,7 @@
 
 .page-hero__bg--support {
     background:
-        radial-gradient(ellipse 60% 70% at 80% 50%, rgba(34,193,94,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 70% at 80% 50%, rgba(34,211,238,0.04) 0%, transparent 60%),
         radial-gradient(ellipse 40% 40% at 10% 80%, rgba(34,211,238,0.04) 0%, transparent 50%);
 }
 

@@ -24,9 +24,8 @@
                     <li>Integrações e APIs customizadas</li>
                     <li>Performance e segurança avançada</li>
                 </ul>
-                <a href="https://wa.me/5541992050559?text=Quero iniciar um projeto WordPress com a Inunda."
-                   class="btn btn--accent" target="_blank" rel="noopener">
-                    Falar sobre meu projeto
+                <a href="/projetos-wordpress-premium/" class="btn btn--gradient">
+                    Ver projetos WordPress
                 </a>
             </div>
 
@@ -47,8 +46,7 @@
                     <li>Hospedagem gerenciada de alto desempenho</li>
                     <li>SLA garantido e suporte humanizado</li>
                 </ul>
-                <a href="https://wa.me/5541992050559?text=Quero saber sobre o suporte premium da Inunda."
-                   class="btn btn--primary" target="_blank" rel="noopener">
+                <a href="/suporte-wordpress-premium/" class="btn btn--gradient">
                     Conhecer planos
                 </a>
             </div>

@@ -20,13 +20,14 @@
 }
 
 .btn--primary {
-    background: var(--color-primary);
-    color: var(--color-white);
+    background: var(--gradient-accent);
+    color: var(--color-dark);
+    font-weight: 700;
 }
 .btn--primary:hover {
     background: var(--color-primary-dark);
     transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(34,193,94,0.3);
+    box-shadow: 0 4px 16px rgba(34,211,238,0.3);
 }
 
 .btn--gradient {
@@ -56,7 +57,7 @@
     border: 1px solid var(--color-primary);
 }
 .btn--accent:hover {
-    background: rgba(34,193,94,0.08);
+    background: rgba(34,211,238,0.08);
 }
 
 /* ===== CARDS ===== */
@@ -83,7 +84,7 @@
 .card__icon {
     width: 56px;
     height: 56px;
-    background: rgba(34,193,94,0.15);
+    background: rgba(34,211,238,0.12);
     border-radius: var(--radius-md);
     display: flex;
     align-items: center;
@@ -92,7 +93,7 @@
 }
 
 .card__icon--primary {
-    background: rgba(34,193,94,0.08);
+    background: rgba(34,211,238,0.08);
 }
 
 .card__tag {

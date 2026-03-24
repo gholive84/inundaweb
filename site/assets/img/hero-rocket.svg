@@ -80,9 +80,9 @@
   </g>
   <g transform="translate(20, 280)">
     <rect x="0" y="0" width="110" height="44" rx="8" fill="rgba(15,23,42,0.8)" stroke="rgba(34,211,238,0.2)" stroke-width="1"/>
-    <circle cx="16" cy="22" r="5" fill="#22c15e" opacity="0.8"/>
+    <circle cx="16" cy="22" r="5" fill="#06b6d4" opacity="0.8"/>
     <rect x="28" y="14" width="55" height="6" rx="3" fill="rgba(255,255,255,0.15)"/>
-    <rect x="28" y="25" width="40" height="5" rx="2.5" fill="rgba(34,193,94,0.3)"/>
+    <rect x="28" y="25" width="40" height="5" rx="2.5" fill="rgba(34,211,238,0.3)"/>
   </g>
   <g transform="translate(450, 440)">
     <rect x="0" y="0" width="110" height="44" rx="8" fill="rgba(15,23,42,0.8)" stroke="rgba(34,211,238,0.2)" stroke-width="1"/>
