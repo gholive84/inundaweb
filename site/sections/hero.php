@@ -1,5 +1,24 @@
 <section class="hero" id="inicio">
+
+    <!-- Vídeo YouTube como background -->
+    <div class="hero__video-wrap" aria-hidden="true">
+        <iframe
+            class="hero__video"
+            src="https://www.youtube.com/embed/HXJEakm65FI?autoplay=1&mute=1&loop=1&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&playsinline=1&playlist=HXJEakm65FI"
+            allow="autoplay; encrypted-media"
+            allowfullscreen
+            title=""
+            loading="lazy">
+        </iframe>
+    </div>
+
+    <!-- Overlay escuro sobre o vídeo -->
+    <div class="hero__overlay" aria-hidden="true"></div>
+
+    <!-- Gradiente decorativo (mantém profundidade) -->
     <div class="hero__bg"></div>
+
+    <!-- Conteúdo -->
     <div class="container">
         <div class="hero__inner">
             <div class="hero__content">
@@ -44,4 +63,5 @@
             </div>
         </div>
     </div>
+
 </section>

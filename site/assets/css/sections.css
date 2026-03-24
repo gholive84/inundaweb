@@ -6,14 +6,54 @@
     padding-top: 80px; /* altura do header fixo */
 }
 
+/* --- vídeo YouTube como fundo --- */
+.hero__video-wrap {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.hero__video {
+    position: absolute;
+    /* centraliza e cobre todo o container sem distorção */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* garante cobertura total mantendo proporção 16:9 */
+    width: calc(100vh * 16 / 9);
+    min-width: 100%;
+    height: calc(100vw * 9 / 16);
+    min-height: 100%;
+    border: none;
+    pointer-events: none;
+}
+
+/* overlay escuro — ajuste opacity para + ou - transparência */
+.hero__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: rgba(10, 15, 30, 0.82);
+    pointer-events: none;
+}
+
+/* gradiente sutil por cima do overlay */
 .hero__bg {
     position: absolute;
     inset: 0;
+    z-index: 2;
     background:
-        radial-gradient(ellipse 50% 80% at 75% 50%, rgba(34,211,238,0.07) 0%, transparent 60%),
-        radial-gradient(ellipse 40% 40% at 20% 80%, rgba(34,211,238,0.04) 0%, transparent 50%),
-        radial-gradient(ellipse 30% 30% at 80% 10%, rgba(6,182,212,0.06) 0%, transparent 50%);
+        radial-gradient(ellipse 50% 80% at 75% 50%, rgba(34,211,238,0.05) 0%, transparent 60%),
+        radial-gradient(ellipse 30% 30% at 80% 10%, rgba(6,182,212,0.04) 0%, transparent 50%);
     pointer-events: none;
+}
+
+/* container fica acima do overlay */
+.hero > .container {
+    position: relative;
+    z-index: 3;
 }
 
 /* grid de 2 colunas dentro do container */
@@ -29,12 +69,12 @@
 
 .hero__content {
     position: relative;
-    z-index: 1;
+    z-index: 3;
 }
 
 .hero__rocket {
     pointer-events: none;
-    z-index: 0;
+    z-index: 3;
     display: flex;
     align-items: center;
     justify-content: center;
