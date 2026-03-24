@@ -6,6 +6,9 @@ RewriteEngine On
 # Blog
 RewriteRule ^blog/?$ blog/index.php [L]
 
+# Guideline interno (sem indexação)
+RewriteRule ^guideline/?$ site/paginas/guideline.php [L]
+
 # Páginas internas de serviços
 RewriteRule ^projetos-wordpress-premium/?$ site/paginas/projetos-wordpress-premium.php [L]
 RewriteRule ^sites-ia/?$ site/paginas/sites-ia.php [L]
