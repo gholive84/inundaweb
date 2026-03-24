@@ -62,6 +62,7 @@ REGRAS OBRIGATÓRIAS:
 3. Preserve os includes do header e footer no início e fim
 4. Apenas modifique o que o usuário pediu, sem alterar o restante
 5. O código deve ser válido PHP/HTML
+6. Para carrosséis/sliders: SEMPRE inclua o CDN do Swiper, a estrutura HTML completa E o script `new Swiper(...)` de inicialização. Sem o script de inicialização o carrossel não funciona.
 
 Identidade visual do site:
 - Cor primária: #22d3ee (ciano)

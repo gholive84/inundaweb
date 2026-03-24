@@ -60,30 +60,47 @@ Os seguintes arquivos CSS são incluídos automaticamente — use as classes def
 
 ## Bibliotecas JS
 Nenhuma lib JS é carregada globalmente por padrão.
-Para adicionar ao criar/editar uma seção, inclua o CDN dentro do próprio arquivo PHP da página.
+Para usar uma lib, inclua o CDN diretamente na página PHP que está editando.
 
-### Swiper.js v11 — Carrosséis / Sliders
-Incluir antes de </body>:
+---
+
+## CARROSSEL DE IMAGENS — USE SEMPRE ESTE PADRÃO COMPLETO
+
+IMPORTANTE: Quando o usuário pedir um carrossel ou slider de imagens, copie EXATAMENTE este bloco completo. Não omita nenhuma parte, especialmente o `<script>` de inicialização no final.
+
 ```html
+<!-- SWIPER CSS — colocar dentro do <head> ou logo antes do bloco -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
 
-<div class="swiper meu-swiper">
+<!-- ESTRUTURA DO CARROSSEL — use uma classe única por página, ex: swiper-fotos, swiper-clientes -->
+<div class="swiper swiper-fotos" style="width:100%;max-width:1200px;margin:0 auto">
   <div class="swiper-wrapper">
-    <div class="swiper-slide"><!-- slide 1 --></div>
-    <div class="swiper-slide"><!-- slide 2 --></div>
-    <div class="swiper-slide"><!-- slide 3 --></div>
+    <div class="swiper-slide">
+      <img src="/site/assets/img/foto1.jpg" alt="Imagem 1" style="width:100%;height:400px;object-fit:cover;border-radius:12px">
+    </div>
+    <div class="swiper-slide">
+      <img src="/site/assets/img/foto2.jpg" alt="Imagem 2" style="width:100%;height:400px;object-fit:cover;border-radius:12px">
+    </div>
+    <div class="swiper-slide">
+      <img src="/site/assets/img/foto3.jpg" alt="Imagem 3" style="width:100%;height:400px;object-fit:cover;border-radius:12px">
+    </div>
   </div>
   <div class="swiper-pagination"></div>
   <div class="swiper-button-prev"></div>
   <div class="swiper-button-next"></div>
 </div>
 
+<!-- SWIPER JS + INICIALIZAÇÃO — obrigatório, colocar antes do </body> -->
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script>
-new Swiper('.meu-swiper', {
+new Swiper('.swiper-fotos', {
     loop: true,
-    pagination: { el: '.swiper-pagination', clickable: true },
-    navigation: true,
+    autoplay: { delay: 3500, disableOnInteraction: false },
+    pagination: { el: '.swiper-fotos .swiper-pagination', clickable: true },
+    navigation: {
+        nextEl: '.swiper-fotos .swiper-button-next',
+        prevEl: '.swiper-fotos .swiper-button-prev',
+    },
     slidesPerView: 1,
     spaceBetween: 24,
     breakpoints: {
@@ -93,6 +110,11 @@ new Swiper('.meu-swiper', {
 });
 </script>
 ```
+
+ATENÇÃO: O `new Swiper(...)` NO FINAL É OBRIGATÓRIO — sem ele o HTML existe mas o carrossel não funciona.
+Use uma classe única (ex: `.swiper-fotos`, `.swiper-clientes`, `.swiper-depoimentos`) para evitar conflito se houver mais de um na página.
+
+---
 
 ### AOS (Animate on Scroll) — Animações ao rolar
 ```html
