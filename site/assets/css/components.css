@@ -29,6 +29,17 @@
     box-shadow: 0 4px 16px rgba(34,193,94,0.3);
 }
 
+.btn--gradient {
+    background: var(--gradient-accent);
+    color: var(--color-dark);
+    font-weight: 700;
+}
+.btn--gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(34,211,238,0.35);
+    filter: brightness(1.05);
+}
+
 .btn--ghost {
     background: transparent;
     color: var(--color-white);

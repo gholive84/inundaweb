@@ -1,7 +1,7 @@
 <header class="header" id="header">
     <div class="container header__inner">
         <a href="/" class="logo">
-            <span class="logo__text">inunda</span>
+            <img src="/site/assets/img/logo.png" alt="Inunda" class="logo__img" width="120" height="36">
         </a>
 
         <nav class="nav" id="nav">

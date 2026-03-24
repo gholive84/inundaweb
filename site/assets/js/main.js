@@ -15,7 +15,6 @@ hamburger.addEventListener('click', () => {
     document.body.style.overflow = isOpen ? 'hidden' : '';
 });
 
-// Fechar ao clicar em link
 nav.querySelectorAll('.nav__link').forEach(link => {
     link.addEventListener('click', () => {
         nav.classList.remove('open');
@@ -28,9 +27,8 @@ nav.querySelectorAll('.nav__link').forEach(link => {
 /* ===== SCROLL REVEAL ===== */
 const revealEls = document.querySelectorAll('.fade-up');
 const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry, i) => {
+    entries.forEach(entry => {
         if (entry.isIntersecting) {
-            // Stagger baseado em ordem dentro do pai
             const siblings = Array.from(entry.target.parentElement.children);
             const idx = siblings.indexOf(entry.target);
             entry.target.style.transitionDelay = `${idx * 0.08}s`;

@@ -1,8 +1,16 @@
 :root {
+    /* Elementor gradient vars — brand accent */
+    --e-global-color-ec3c7a7: #22d3ee;
+    --e-global-color-3ee16e7: #06b6d4;
+
+    /* Gradient shorthand */
+    --gradient-accent: linear-gradient(135deg, var(--e-global-color-ec3c7a7) 0%, var(--e-global-color-3ee16e7) 100%);
+
     /* Colors */
     --color-primary: #22c15e;
     --color-primary-dark: #1aab52;
-    --color-accent: #16a34a;
+    --color-accent: #22d3ee;
+    --color-accent-dark: #06b6d4;
     --color-dark: #0f172a;
     --color-dark-2: #1e293b;
     --color-light: #f8fafc;

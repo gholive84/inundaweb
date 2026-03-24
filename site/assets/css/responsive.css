@@ -1,3 +1,11 @@
+/* ===== HERO ROCKET ===== */
+@media (max-width: 1100px) {
+    .hero__rocket {
+        width: 420px;
+        opacity: 0.5;
+    }
+}
+
 /* ===== TABLET (768px) ===== */
 @media (max-width: 1024px) {
     .services__grid {
@@ -86,7 +94,12 @@
         color: var(--color-white) !important;
     }
 
-    .header .btn--primary {
+    .header .btn--primary,
+    .header .btn--gradient {
+        display: none;
+    }
+
+    .hero__rocket {
         display: none;
     }
 

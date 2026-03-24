@@ -1,8 +1,8 @@
 <footer class="footer">
     <div class="container footer__inner">
         <div class="footer__brand">
-            <a href="/" class="logo logo--white">
-                <span class="logo__text">inunda</span>
+            <a href="/" class="logo">
+                <img src="/site/assets/img/logo.png" alt="Inunda" class="logo__img" width="120" height="36">
             </a>
             <p class="footer__tagline">Tecnologia que flui com seu negócio</p>
             <div class="footer__social">
@@ -22,8 +22,8 @@
             <div class="footer__col">
                 <h4>Serviços</h4>
                 <ul>
-                    <li><a href="#servicos">Projetos WordPress</a></li>
-                    <li><a href="#servicos">Suporte & Hosting</a></li>
+                    <li><a href="/projetos-wordpress-premium/">Projetos WordPress</a></li>
+                    <li><a href="/suporte-wordpress-premium/">Suporte & Hosting</a></li>
                 </ul>
             </div>
             <div class="footer__col">
