@@ -30,6 +30,11 @@
     padding-top: 56px;
     padding-bottom: 80px;
     text-align: left;
+    width: 100%;
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .page-hero__title,

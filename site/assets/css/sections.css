@@ -334,6 +334,22 @@
 
 .service-block--reverse .service-block__content {
     padding: 80px 56px 80px 64px;
+    text-align: right;
+    align-items: flex-end;
+}
+
+.service-block--reverse .service-block__list li {
+    padding-left: 0;
+    padding-right: 22px;
+}
+
+.service-block--reverse .service-block__list li::before {
+    left: auto;
+    right: 0;
+}
+
+.service-block--reverse .service-block__content .btn {
+    margin-left: auto;
 }
 
 .service-block--ia .service-block__content {

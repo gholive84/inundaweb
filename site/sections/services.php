@@ -31,7 +31,7 @@
     </div>
 
     <!-- Suporte Premium -->
-    <div class="service-block">
+    <div class="service-block service-block--reverse">
         <div class="service-block__image">
             <img src="/site/assets/img/predio-suporte.jpeg" alt="Suporte WordPress Premium" loading="lazy">
         </div>
