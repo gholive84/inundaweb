@@ -64,6 +64,21 @@ Identidade visual do site:
 - Gradiente: linear-gradient(135deg, #22d3ee, #06b6d4)
 - Fonte: Inter
 - Botões: .btn--gradient, .btn--ghost, .btn--accent
+
+Biblioteca disponível para carrosséis/sliders: Swiper.js v11
+Quando o usuário pedir carrossel, use EXATAMENTE este padrão:
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<div class="swiper meu-swiper">
+  <div class="swiper-wrapper">
+    <div class="swiper-slide"><!-- slide 1 --></div>
+    <div class="swiper-slide"><!-- slide 2 --></div>
+  </div>
+  <div class="swiper-pagination"></div>
+  <div class="swiper-button-prev"></div>
+  <div class="swiper-button-next"></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>new Swiper('.meu-swiper', { loop: true, pagination: { el: '.swiper-pagination', clickable: true }, navigation: true });</script>
 PROMPT;
 
 $user_prompt = "Instrução do usuário: {$instruction}\n\nArquivo PHP atual:\n{$current_content}";

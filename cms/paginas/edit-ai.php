@@ -356,20 +356,15 @@ $page_title = 'Alterar com IA — ' . $pagina['title'];
         <button class="btn btn-secondary btn-sm" id="discardBtn">
           Descartar alterações
         </button>
-        <?php if ($hist_count > 0): ?>
-        <button class="btn btn-secondary btn-sm" id="historyBtn">
-          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.95"/></svg>
-          Histórico (<?= $hist_count ?>)
-        </button>
-        <?php endif; ?>
       </div>
 
-      <?php if ($hist_count === 0): ?>
-      <!-- Show history btn always if exists after publish -->
-      <div id="historySection" style="display:none;margin-top:10px"></div>
-      <?php else: ?>
-      <div id="historySection" style="display:none;margin-top:10px"></div>
-      <?php endif; ?>
+      <div id="historyWrapper" style="margin-top:10px;<?= $hist_count > 0 ? '' : 'display:none' ?>">
+        <button class="btn btn-secondary btn-sm" id="historyBtn" style="width:100%">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.95"/></svg>
+          Histórico (<span id="histCount"><?= $hist_count ?></span>)
+        </button>
+        <div id="historySection" style="display:none;margin-top:8px"></div>
+      </div>
     </div>
   </div>
 
@@ -403,6 +398,7 @@ const CSRF_TOKEN  = document.querySelector('meta[name=csrf]').content;
 <script>
 /* ══ Chat State ══ */
 let pendingContent = null; // PHP content waiting to be published
+let locked = false;        // true while waiting for publish/discard decision
 
 const messages   = document.getElementById('chatMessages');
 const input      = document.getElementById('chatInput');
@@ -410,7 +406,9 @@ const sendBtn    = document.getElementById('sendBtn');
 const actions    = document.getElementById('chatActions');
 const publishBtn = document.getElementById('publishBtn');
 const discardBtn = document.getElementById('discardBtn');
-const histBtn    = document.getElementById('historyBtn');
+const histBtn     = document.getElementById('historyBtn');
+const histWrapper = document.getElementById('historyWrapper');
+const histCount   = document.getElementById('histCount');
 const histSection = document.getElementById('historySection');
 const previewFrame = document.getElementById('previewFrame');
 const previewStatus = document.getElementById('previewStatus');
@@ -435,10 +433,21 @@ function addTyping() {
     return d;
 }
 
+/* ── Lock / unlock input ── */
+function setLocked(val) {
+    locked = val;
+    sendBtn.disabled = val;
+    input.disabled = val;
+    input.placeholder = val
+        ? 'Publique ou descarte antes de enviar um novo pedido.'
+        : 'Ex: Mude a cor do botão principal para verde, adicione uma seção de FAQ...';
+    if (!val) input.focus();
+}
+
 /* ── Send message ── */
 async function sendMessage() {
     const text = input.value.trim();
-    if (!text || sendBtn.disabled) return;
+    if (!text || locked || sendBtn.disabled) return;
 
     addMsg(text, 'user');
     input.value = '';
@@ -477,6 +486,7 @@ async function sendMessage() {
             previewStatus.textContent = 'Versão modificada';
             previewStatus.className = 'ai-preview__status ai-preview__status--modified';
             actions.style.display = 'flex';
+            setLocked(true);
         }
     } catch (err) {
         typing.remove();
@@ -487,8 +497,10 @@ async function sendMessage() {
         }
     }
 
-    sendBtn.disabled = false;
-    input.focus();
+    if (!locked) {
+        sendBtn.disabled = false;
+        input.focus();
+    }
 }
 
 /* ── Load preview via temp file ── */
@@ -521,6 +533,12 @@ publishBtn?.addEventListener('click', async () => {
             previewFrame.src = PAGE_URL + '?t=' + Date.now();
             previewStatus.textContent = 'Versão atual';
             previewStatus.className = 'ai-preview__status ai-preview__status--live';
+            // Update history count and show history button
+            const cur = parseInt(histCount.textContent, 10) || 0;
+            histCount.textContent = cur + 1;
+            histWrapper.style.display = '';
+            histSection.style.display = 'none'; // collapse if open
+            setLocked(false);
         } else {
             addMsg('Erro ao publicar: ' + (data.error || ''), 'error');
         }
@@ -540,6 +558,7 @@ discardBtn?.addEventListener('click', () => {
     previewStatus.textContent = 'Versão atual';
     previewStatus.className = 'ai-preview__status ai-preview__status--live';
     addMsg('Alterações descartadas. A página voltou ao estado original.', 'system');
+    setLocked(false);
 });
 
 /* ── History ── */
