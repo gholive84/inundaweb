@@ -1,4 +1,8 @@
 <?php
+// Suppress warnings/notices so they don't corrupt the JSON output
+ini_set('display_errors', '0');
+error_reporting(0);
+
 require_once dirname(__DIR__) . '/boot.php';
 auth_check();
 
@@ -71,9 +75,12 @@ $payload = [
         ['role' => 'system', 'content' => $system_prompt],
         ['role' => 'user',   'content' => $user_prompt],
     ],
-    'temperature' => 0.3,
-    'max_tokens'  => 8000,
+    'temperature' => 0.2,
+    'max_tokens'  => 16000,
 ];
+
+// Aumenta tempo de execução PHP para requests longos
+set_time_limit(180);
 
 $ch = curl_init('https://api.openai.com/v1/chat/completions');
 curl_setopt_array($ch, [
@@ -83,16 +90,19 @@ curl_setopt_array($ch, [
         'Content-Type: application/json',
         'Authorization: Bearer ' . $api_key,
     ],
-    CURLOPT_POSTFIELDS     => json_encode($payload),
-    CURLOPT_TIMEOUT        => 60,
+    CURLOPT_POSTFIELDS      => json_encode($payload),
+    CURLOPT_TIMEOUT         => 150,
+    CURLOPT_CONNECTTIMEOUT  => 15,
+    CURLOPT_SSL_VERIFYPEER  => true,
 ]);
 
-$response = curl_exec($ch);
+$response  = curl_exec($ch);
 $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+$curl_err  = curl_error($ch);
 curl_close($ch);
 
-if (!$response) {
-    echo json_encode(['ok' => false, 'error' => 'Falha ao chamar a API OpenAI. Verifique a chave e tente novamente.']);
+if ($response === false || $response === '') {
+    echo json_encode(['ok' => false, 'error' => 'cURL falhou: ' . ($curl_err ?: 'sem resposta da API. Verifique a chave OpenAI.')]);
     exit;
 }
 
@@ -112,8 +122,8 @@ $modified_content = preg_replace('/^```\s*/i', '', $modified_content);
 $modified_content = preg_replace('/\s*```$/i', '', $modified_content);
 $modified_content = trim($modified_content);
 
-// Save to temp session for preview
-session_start();
+// Save to temp session for preview (session already started by boot.php)
+if (session_status() === PHP_SESSION_NONE) session_start();
 $token = bin2hex(random_bytes(16));
 $_SESSION['ai_preview'][$token] = [
     'content'   => $modified_content,

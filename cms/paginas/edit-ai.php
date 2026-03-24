@@ -448,15 +448,20 @@ async function sendMessage() {
     const typing = addTyping();
 
     try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 150000); // 150s
+
         const res = await fetch(CMS_URL + '/paginas/ai-api.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                page_id:    PAGE_ID,
+                page_id:     PAGE_ID,
                 instruction: text,
                 csrf_token:  CSRF_TOKEN
-            })
+            }),
+            signal: controller.signal
         });
+        clearTimeout(timeout);
 
         const data = await res.json();
         typing.remove();
@@ -475,7 +480,11 @@ async function sendMessage() {
         }
     } catch (err) {
         typing.remove();
-        addMsg('Erro de conexão. Verifique sua internet e tente novamente.', 'error');
+        if (err.name === 'AbortError') {
+            addMsg('A requisição demorou demais. Tente uma instrução mais simples ou use o modelo gpt-4o-mini.', 'error');
+        } else {
+            addMsg('Erro de conexão: ' + err.message, 'error');
+        }
     }
 
     sendBtn.disabled = false;
