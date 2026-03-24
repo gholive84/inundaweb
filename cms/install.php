@@ -73,6 +73,16 @@ if ($step === 1) {
             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
 
+        // Comentários internos dos leads
+        "CREATE TABLE IF NOT EXISTS lead_comments (
+            id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            lead_id    INT UNSIGNED NOT NULL,
+            content    TEXT NOT NULL,
+            created_by INT UNSIGNED NULL,
+            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            INDEX (lead_id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
+
         // Configurações gerais (SMTP, header codes, etc.)
         "CREATE TABLE IF NOT EXISTS settings (
             id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,

@@ -7,6 +7,18 @@ header('Content-Type: application/json; charset=utf-8');
 $pdo    = db();
 $method = $_SERVER['REQUEST_METHOD'];
 
+// Auto-create table if missing
+try {
+    $pdo->exec("CREATE TABLE IF NOT EXISTS lead_comments (
+        id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        lead_id    INT UNSIGNED NOT NULL,
+        content    TEXT NOT NULL,
+        created_by INT UNSIGNED NULL,
+        created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        INDEX (lead_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+} catch (Exception $e) {}
+
 if ($method === 'GET') {
     $lead_id = (int)($_GET['lead_id'] ?? 0);
     if (!$lead_id) {
