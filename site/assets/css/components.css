@@ -162,10 +162,10 @@
 }
 
 .header.scrolled {
-    background: rgba(255,255,255,0.95);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    box-shadow: 0 1px 0 var(--color-border);
+    background: rgba(8,15,28,0.97);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.06);
     padding: 14px 0;
 }
 
@@ -208,16 +208,8 @@
     transition: var(--transition);
 }
 
-.header.scrolled .nav__link {
-    color: var(--color-muted);
-}
-
 .nav__link:hover {
-    color: var(--color-white);
-}
-
-.header.scrolled .nav__link:hover {
-    color: var(--color-primary);
+    color: var(--color-accent);
 }
 
 /* ===== HAMBURGER ===== */
@@ -238,9 +230,7 @@
     display: block;
 }
 
-.header.scrolled .hamburger span {
-    background: var(--color-text);
-}
+/* hamburger stays white on dark header */
 
 /* ===== WHATSAPP BTN ===== */
 .whatsapp-btn {

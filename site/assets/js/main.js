@@ -81,6 +81,49 @@ const observer = new IntersectionObserver((entries) => {
 
 revealEls.forEach(el => observer.observe(el));
 
+/* ===== PHONE MASK ===== */
+const phoneInput = document.getElementById('cf_phone');
+if (phoneInput) {
+    phoneInput.addEventListener('input', (e) => {
+        let d = e.target.value.replace(/\D/g, '').substring(0, 11);
+        if (d.length > 7)      d = `(${d.slice(0,2)}) ${d.slice(2,7)}-${d.slice(7)}`;
+        else if (d.length > 2) d = `(${d.slice(0,2)}) ${d.slice(2)}`;
+        else if (d.length > 0) d = `(${d}`;
+        e.target.value = d;
+    });
+}
+
+/* ===== CONTACT FORM VALIDATION ===== */
+const contactForm = document.getElementById('contactForm');
+if (contactForm) {
+    const validate = (field, test) => {
+        const g = field.closest('.form-group');
+        const ok = test(field.value.trim());
+        g.classList.toggle('has-error', !ok);
+        return ok;
+    };
+
+    contactForm.querySelectorAll('input').forEach(inp => {
+        inp.addEventListener('input', () => inp.closest('.form-group').classList.remove('has-error'));
+    });
+
+    contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name  = document.getElementById('cf_name');
+        const email = document.getElementById('cf_email');
+        const phone = document.getElementById('cf_phone');
+
+        const v1 = validate(name,  v => v.length >= 2);
+        const v2 = validate(email, v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v));
+        const v3 = validate(phone, v => v.replace(/\D/g,'').length >= 10);
+
+        if (v1 && v2 && v3) {
+            contactForm.querySelector('.contact-form__fields').style.display = 'none';
+            document.getElementById('formSuccess').classList.add('visible');
+        }
+    });
+}
+
 /* ===== SERVICE BLOCKS IN-VIEW ===== */
 const serviceBlocks = document.querySelectorAll('.service-block');
 if (serviceBlocks.length) {

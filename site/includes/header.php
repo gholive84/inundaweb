@@ -63,6 +63,7 @@
 
                 <li><a href="#sobre" class="nav__link">Sobre</a></li>
                 <li><a href="#clientes" class="nav__link">Clientes</a></li>
+                <li><a href="/blog/" class="nav__link">Blog</a></li>
                 <li><a href="#contato" class="nav__link">Contato</a></li>
             </ul>
         </nav>

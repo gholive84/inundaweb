@@ -26,11 +26,11 @@
 
 /* ===== HERO BACKGROUND IMAGES ===== */
 
-/* Projetos — dev codando com janela + skyline da cidade */
+/* Projetos — empresário de terno com celular */
 .page-hero--projetos .page-hero__bg {
     background:
         linear-gradient(to right, #0f172a 30%, rgba(15,23,42,0.80) 58%, rgba(15,23,42,0.20) 100%),
-        url('https://images.pexels.com/photos/1181677/pexels-photo-1181677.jpeg?auto=compress&cs=tinysrgb&w=1600') right center / cover no-repeat;
+        url('https://images.pexels.com/photos/3785104/pexels-photo-3785104.jpeg?auto=compress&cs=tinysrgb&w=1600') right center / cover no-repeat;
 }
 
 /* Suporte — Brooklyn Bridge + skyline NYC noturna */

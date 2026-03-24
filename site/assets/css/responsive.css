@@ -83,6 +83,17 @@
     }
 }
 
+/* ===== CONTACT + BLOG TABLET ===== */
+@media (max-width: 900px) {
+    .contact__inner {
+        grid-template-columns: 1fr;
+        gap: 48px;
+    }
+    .blog-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 /* ===== MOBILE (640px) ===== */
 @media (max-width: 640px) {
     :root {
@@ -214,6 +225,15 @@
     /* CTA */
     .cta-section__title {
         font-size: 1.875rem;
+    }
+
+    /* Blog */
+    .blog-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .blog-categories {
+        gap: 6px;
     }
 }
 
