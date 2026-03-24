@@ -1,12 +1,9 @@
 /* ===== HERO ===== */
 .hero {
     position: relative;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
     background: var(--color-dark);
     overflow: hidden;
-    padding-top: 80px;
+    padding-top: 80px; /* altura do header fixo */
 }
 
 .hero__bg {
@@ -19,40 +16,34 @@
     pointer-events: none;
 }
 
-/* container vira flex row */
+/* grid de 2 colunas dentro do container */
 .hero__inner {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 440px;
     align-items: center;
-    gap: 24px;
-    width: 100%;
-    padding-top: 40px;
+    gap: 40px;
+    min-height: calc(100vh - 80px);
+    padding-top: 64px;
     padding-bottom: 80px;
 }
 
 .hero__content {
-    flex: 0 0 58%;
-    min-width: 0;
     position: relative;
     z-index: 1;
 }
 
 .hero__rocket {
-    flex: 0 0 42%;
-    min-width: 0;
     pointer-events: none;
     z-index: 0;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    padding-right: 0;
+    justify-content: center;
 }
 
 .hero__rocket img {
     width: 100%;
-    max-width: 500px;
     height: auto;
     display: block;
-    margin-left: auto;
 }
 
 .hero .label {
