@@ -26,25 +26,25 @@
 
 /* ===== HERO BACKGROUND IMAGES ===== */
 
-/* Projetos — homem com celular, skyline noturna */
+/* Projetos — dev codando com janela + skyline da cidade */
 .page-hero--projetos .page-hero__bg {
     background:
-        linear-gradient(to right, #0f172a 30%, rgba(15,23,42,0.80) 55%, rgba(15,23,42,0.25) 100%),
-        url('https://images.unsplash.com/photo-ZqblQBk5CgA?auto=format&fit=crop&w=1600&q=80') right center / cover no-repeat;
+        linear-gradient(to right, #0f172a 30%, rgba(15,23,42,0.80) 58%, rgba(15,23,42,0.20) 100%),
+        url('https://images.pexels.com/photos/1181677/pexels-photo-1181677.jpeg?auto=compress&cs=tinysrgb&w=1600') right center / cover no-repeat;
 }
 
-/* Suporte — ponte futurista */
+/* Suporte — Brooklyn Bridge + skyline NYC noturna */
 .page-hero--suporte .page-hero__bg {
     background:
-        linear-gradient(to right, #0f172a 30%, rgba(15,23,42,0.80) 55%, rgba(15,23,42,0.25) 100%),
-        url('https://images.unsplash.com/photo-UPf88_7VPUg?auto=format&fit=crop&w=1600&q=80') right center / cover no-repeat;
+        linear-gradient(to right, #0f172a 30%, rgba(15,23,42,0.80) 58%, rgba(15,23,42,0.20) 100%),
+        url('https://images.pexels.com/photos/1755680/pexels-photo-1755680.jpeg?auto=compress&cs=tinysrgb&w=1600') right center / cover no-repeat;
 }
 
-/* Sites IA — robô em ambiente futurista */
+/* Sites IA — mão robótica + rede neural azul */
 .page-hero--ia .page-hero__bg {
     background:
-        linear-gradient(to right, #0f172a 30%, rgba(15,23,42,0.80) 55%, rgba(15,23,42,0.25) 100%),
-        url('https://images.unsplash.com/photo-yl5w9DbPzu0?auto=format&fit=crop&w=1600&q=80') right center / cover no-repeat;
+        linear-gradient(to right, #0f172a 30%, rgba(15,23,42,0.80) 58%, rgba(15,23,42,0.20) 100%),
+        url('https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1600') right center / cover no-repeat;
 }
 
 .page-hero__content {
