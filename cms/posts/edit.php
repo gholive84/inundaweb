@@ -166,7 +166,7 @@ require_once dirname(__DIR__) . '/includes/head.php';
         <div class="form-group form-group--full">
           <label>Conteúdo</label>
           <div id="quill-editor" style="min-height:380px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#e2e8f0"></div>
-          <input type="hidden" id="content" name="content">
+          <input type="hidden" id="content" name="content" value="<?= h($post['content'] ?? '') ?>">
         </div>
 
       </div>

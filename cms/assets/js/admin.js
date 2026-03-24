@@ -64,22 +64,21 @@ document.querySelectorAll('.tab[data-tab]').forEach(tab => {
 const fieldsBuilder = document.getElementById('fieldsBuilder');
 const addFieldBtn   = document.getElementById('addField');
 if (fieldsBuilder && addFieldBtn) {
-    let fieldCount = fieldsBuilder.querySelectorAll('.field-row').length;
     addFieldBtn.addEventListener('click', () => {
         const row = document.createElement('div');
         row.className = 'field-row';
         row.innerHTML = `
             <div class="form-group" style="flex:1">
                 <label>Label</label>
-                <input type="text" name="fields[${fieldCount}][label]" placeholder="ex: Preço" required>
+                <input type="text" name="fields[label][]" placeholder="ex: Preço" required>
             </div>
             <div class="form-group" style="flex:1">
                 <label>Chave (key)</label>
-                <input type="text" name="fields[${fieldCount}][key]" placeholder="ex: preco" required>
+                <input type="text" name="fields[key][]" placeholder="ex: preco" required>
             </div>
             <div class="form-group" style="width:140px">
                 <label>Tipo</label>
-                <select name="fields[${fieldCount}][type]">
+                <select name="fields[type][]">
                     <option value="text">Texto</option>
                     <option value="textarea">Área de texto</option>
                     <option value="number">Número</option>
@@ -93,7 +92,6 @@ if (fieldsBuilder && addFieldBtn) {
             <button type="button" class="btn btn-danger btn-sm btn-remove-field" style="margin-bottom:1px">✕</button>
         `;
         fieldsBuilder.appendChild(row);
-        fieldCount++;
         // auto-generate key from label
         const labelInp = row.querySelector('input[name*="[label]"]');
         const keyInp   = row.querySelector('input[name*="[key]"]');
