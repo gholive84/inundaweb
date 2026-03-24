@@ -1,0 +1,12 @@
+Options -Indexes
+DirectoryIndex index.php index.html
+
+RewriteEngine On
+
+# Blog
+RewriteRule ^blog/?$ blog/index.php [L]
+
+# Páginas internas de serviços
+RewriteRule ^projetos-wordpress-premium/?$ site/paginas/projetos-wordpress-premium.php [L]
+RewriteRule ^sites-ia/?$ site/paginas/sites-ia.php [L]
+RewriteRule ^suporte-wordpress-premium/?$ site/paginas/suporte-wordpress-premium.php [L]

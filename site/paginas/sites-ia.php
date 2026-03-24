@@ -1,5 +1,5 @@
 <?php
-$root = dirname(__DIR__);
+$root = dirname(dirname(__DIR__));
 $page_title = 'Sites com Inteligência Artificial — Inunda';
 $page_description = 'Sites premium desenvolvidos com IA como co-piloto. Projetos de alto padrão entregues em tempo recorde, com suporte dedicado da Inunda.';
 include $root . '/site/includes/head-page.php';

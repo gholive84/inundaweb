@@ -1,5 +1,5 @@
 <?php
-$root = dirname(__DIR__);
+$root = dirname(dirname(__DIR__));
 $page_title = 'Suporte WordPress Premium — Inunda';
 $page_description = 'Seu time técnico WordPress terceirizado. Monitoramento 24/7, hospedagem gerenciada, SLA garantido e suporte humanizado.';
 include $root . '/site/includes/head-page.php';

@@ -1,5 +1,5 @@
 <?php
-$root = dirname(__DIR__);
+$root = dirname(dirname(__DIR__));
 $page_title = 'Projetos WordPress Premium — Inunda';
 $page_description = 'Desenvolvimento WordPress empresarial com arquitetura robusta, performance otimizada e segurança avançada. Conheça nossos projetos.';
 include $root . '/site/includes/head-page.php';
