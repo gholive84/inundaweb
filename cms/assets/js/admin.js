@@ -60,57 +60,87 @@ document.querySelectorAll('.tab[data-tab]').forEach(tab => {
     });
 });
 
-// Dynamic field builder (content types)
-const fieldsBuilder = document.getElementById('fieldsBuilder');
-const addFieldBtn   = document.getElementById('addField');
-if (fieldsBuilder && addFieldBtn) {
-    addFieldBtn.addEventListener('click', () => {
+// Dynamic field builder (content types) — JSON-based approach
+(function () {
+    const fieldsBuilder = document.getElementById('fieldsBuilder');
+    const addFieldBtn   = document.getElementById('addField');
+    const typeForm      = document.getElementById('typeForm');
+    const fieldsJsonInput = document.getElementById('fieldsJsonInput');
+    if (!fieldsBuilder || !addFieldBtn || !typeForm || !fieldsJsonInput) return;
+
+    const FIELD_TYPES = [
+        ['text',     'Texto'],
+        ['textarea', 'Área de texto'],
+        ['number',   'Número'],
+        ['url',      'URL'],
+        ['image',    'Imagem (upload)'],
+        ['file',     'Arquivo (upload)'],
+        ['date',     'Data (calendário)'],
+        ['select',   'Select'],
+        ['checkbox', 'Checkbox'],
+    ];
+
+    function toKey(str) {
+        return str.toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-z0-9]/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '');
+    }
+
+    function buildTypeOptions(selected) {
+        return FIELD_TYPES.map(([val, lbl]) =>
+            `<option value="${val}"${val === selected ? ' selected' : ''}>${lbl}</option>`
+        ).join('');
+    }
+
+    function createRow(field) {
         const row = document.createElement('div');
         row.className = 'field-row';
         row.innerHTML = `
             <div class="form-group" style="flex:1">
                 <label>Label</label>
-                <input type="text" name="fields[label][]" placeholder="ex: Preço" required>
+                <input type="text" class="fb-label" placeholder="ex: Preço" value="${field.label || ''}" required>
             </div>
             <div class="form-group" style="flex:1">
                 <label>Chave (key)</label>
-                <input type="text" name="fields[key][]" placeholder="ex: preco" required>
+                <input type="text" class="fb-key" placeholder="ex: preco" value="${field.key || ''}" required>
             </div>
-            <div class="form-group" style="width:140px">
+            <div class="form-group" style="width:150px">
                 <label>Tipo</label>
-                <select name="fields[type][]">
-                    <option value="text">Texto</option>
-                    <option value="textarea">Área de texto</option>
-                    <option value="number">Número</option>
-                    <option value="url">URL</option>
-                    <option value="image">Imagem (upload)</option>
-                    <option value="file">Arquivo (upload)</option>
-                    <option value="date">Data (calendário)</option>
-                    <option value="select">Select</option>
-                    <option value="checkbox">Checkbox</option>
-                </select>
+                <select class="fb-type">${buildTypeOptions(field.type || 'text')}</select>
             </div>
             <button type="button" class="btn btn-danger btn-sm btn-remove-field" style="margin-bottom:1px">✕</button>
         `;
-        fieldsBuilder.appendChild(row);
-        // auto-generate key from label
-        const labelInp = row.querySelector('input[name*="[label]"]');
-        const keyInp   = row.querySelector('input[name*="[key]"]');
+        const labelInp = row.querySelector('.fb-label');
+        const keyInp   = row.querySelector('.fb-key');
         labelInp.addEventListener('input', () => {
-            if (!keyInp.dataset.locked) {
-                keyInp.value = labelInp.value.toLowerCase()
-                    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-                    .replace(/[^a-z0-9]/g, '_').replace(/_+/g, '_').replace(/^_|_$/g,'');
-            }
+            if (!keyInp.dataset.locked) keyInp.value = toKey(labelInp.value);
         });
-        keyInp.addEventListener('input', () => keyInp.dataset.locked = '1');
+        keyInp.addEventListener('input', () => { keyInp.dataset.locked = '1'; });
+        if (field.key) keyInp.dataset.locked = '1';
+        return row;
+    }
+
+    addFieldBtn.addEventListener('click', () => {
+        fieldsBuilder.appendChild(createRow({}));
     });
+
     fieldsBuilder.addEventListener('click', e => {
         if (e.target.classList.contains('btn-remove-field')) {
             e.target.closest('.field-row').remove();
         }
     });
-}
+
+    typeForm.addEventListener('submit', () => {
+        const fields = [];
+        fieldsBuilder.querySelectorAll('.field-row').forEach(row => {
+            const lbl = row.querySelector('.fb-label')?.value.trim() || '';
+            const key = row.querySelector('.fb-key')?.value.trim() || '';
+            const type = row.querySelector('.fb-type')?.value || 'text';
+            if (lbl && key) fields.push({ label: lbl, key, type });
+        });
+        fieldsJsonInput.value = JSON.stringify(fields);
+    });
+})();
 
 // Lead status update (inline select)
 document.querySelectorAll('.lead-status-select').forEach(sel => {

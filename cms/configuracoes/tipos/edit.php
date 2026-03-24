@@ -39,16 +39,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($name === '') $errors[] = 'Nome obrigatório.';
     if ($sl === '') $sl = slug($name);
 
-    // Build fields schema
+    // Build fields schema from JSON hidden input
     $fields = [];
-    $labels = $_POST['fields']['label'] ?? [];
-    $keys   = $_POST['fields']['key']   ?? [];
-    $ftypes = $_POST['fields']['type']  ?? [];
-    foreach ($labels as $i => $lbl) {
-        $lbl = trim($lbl);
-        $key = trim($keys[$i] ?? '');
-        if ($lbl === '' || $key === '') continue;
-        $fields[] = ['label' => $lbl, 'key' => $key, 'type' => $ftypes[$i] ?? 'text'];
+    $fields_json_raw = trim($_POST['fields_json'] ?? '');
+    if ($fields_json_raw !== '') {
+        $decoded = json_decode($fields_json_raw, true);
+        if (is_array($decoded)) {
+            foreach ($decoded as $f) {
+                $lbl = trim($f['label'] ?? '');
+                $key = trim($f['key'] ?? '');
+                if ($lbl === '' || $key === '') continue;
+                $fields[] = ['label' => $lbl, 'key' => $key, 'type' => $f['type'] ?? 'text'];
+            }
+        }
+    }
+    // Legacy fallback (old POST array format — only if JSON not provided)
+    if ($fields_json_raw === '') {
+        $labels = $_POST['fields']['label'] ?? [];
+        $keys   = $_POST['fields']['key']   ?? [];
+        $ftypes = $_POST['fields']['type']  ?? [];
+        foreach ($labels as $i => $lbl) {
+            $lbl = trim($lbl);
+            $key = trim($keys[$i] ?? '');
+            if ($lbl === '' || $key === '') continue;
+            $fields[] = ['label' => $lbl, 'key' => $key, 'type' => $ftypes[$i] ?? 'text'];
+        }
     }
 
     if (empty($errors)) {
@@ -98,8 +113,9 @@ require_once dirname(dirname(__DIR__)) . '/includes/head.php';
 </div>
 <?php endif; ?>
 
-<form method="POST" novalidate>
+<form method="POST" novalidate id="typeForm">
   <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
+  <input type="hidden" name="fields_json" id="fieldsJsonInput" value="<?= h(json_encode($fields_schema, JSON_UNESCAPED_UNICODE)) ?>">
 
   <div class="adm-card">
     <div class="adm-card__header">
@@ -132,22 +148,22 @@ require_once dirname(dirname(__DIR__)) . '/includes/head.php';
     <div class="adm-card__body">
 
       <div id="fieldsBuilder" class="fields-builder">
-        <?php foreach ($fields_schema as $i => $field): ?>
+        <?php foreach ($fields_schema as $i => $field):
+          $ftypes_opts = ['text'=>'Texto','textarea'=>'Área de texto','number'=>'Número','url'=>'URL','image'=>'Imagem (upload)','file'=>'Arquivo (upload)','date'=>'Data (calendário)','select'=>'Select','checkbox'=>'Checkbox'];
+        ?>
         <div class="field-row">
           <div class="form-group" style="flex:1">
             <label>Label</label>
-            <input type="text" name="fields[label][]" value="<?= h($field['label'] ?? '') ?>" placeholder="ex: Autor" required>
+            <input type="text" class="fb-label" value="<?= h($field['label'] ?? '') ?>" placeholder="ex: Autor" required>
           </div>
           <div class="form-group" style="flex:1">
             <label>Chave (key)</label>
-            <input type="text" name="fields[key][]" value="<?= h($field['key'] ?? '') ?>" placeholder="ex: autor" required data-locked="1">
+            <input type="text" class="fb-key" value="<?= h($field['key'] ?? '') ?>" placeholder="ex: autor" required data-locked="1">
           </div>
           <div class="form-group" style="width:150px">
             <label>Tipo</label>
-            <select name="fields[type][]">
-              <?php
-              $ftypes_opts = ['text'=>'Texto','textarea'=>'Área de texto','number'=>'Número','url'=>'URL','image'=>'Imagem (upload)','file'=>'Arquivo (upload)','date'=>'Data (calendário)','checkbox'=>'Checkbox'];
-              foreach ($ftypes_opts as $val => $lbl): ?>
+            <select class="fb-type">
+              <?php foreach ($ftypes_opts as $val => $lbl): ?>
               <option value="<?= $val ?>" <?= ($field['type'] ?? 'text') === $val ? 'selected' : '' ?>><?= $lbl ?></option>
               <?php endforeach; ?>
             </select>
