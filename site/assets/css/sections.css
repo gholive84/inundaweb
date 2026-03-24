@@ -358,6 +358,12 @@
 .service-block.in-view .service-block__content > *:nth-child(5) { opacity:1; transform:none; transition-delay:0.48s; }
 .service-block.in-view .service-block__content > *:nth-child(6) { opacity:1; transform:none; transition-delay:0.54s; }
 
+.service-block__content .btn {
+    width: fit-content;
+    padding: 10px 20px;
+    font-size: 0.875rem;
+}
+
 .service-block__title {
     font-size: clamp(2rem, 3vw, 2.75rem);
     font-weight: 800;

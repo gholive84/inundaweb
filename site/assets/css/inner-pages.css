@@ -29,8 +29,12 @@
     z-index: 1;
     padding-top: 56px;
     padding-bottom: 80px;
-    max-width: 760px;
     text-align: left;
+}
+
+.page-hero__title,
+.page-hero__subtitle {
+    max-width: 760px;
 }
 
 .back-link {

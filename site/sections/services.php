@@ -31,7 +31,7 @@
     </div>
 
     <!-- Suporte Premium -->
-    <div class="service-block service-block--reverse">
+    <div class="service-block">
         <div class="service-block__image">
             <img src="/site/assets/img/predio-suporte.jpeg" alt="Suporte WordPress Premium" loading="lazy">
         </div>
@@ -60,7 +60,7 @@
             <img src="/site/assets/img/sites-ia.svg" alt="Sites com Inteligência Artificial" loading="lazy">
         </div>
         <div class="service-block__content">
-            <span class="label label--ia">Novo</span>
+            <span class="label">ia code</span>
             <h3 class="service-block__title">Sites com<br><span class="text--gradient">Inteligência Artificial</span></h3>
             <p class="service-block__text">
                 Desenvolvemos sites premium usando IA como co-piloto do processo criativo e técnico. O resultado: projetos de alto padrão entregues em tempo recorde — sem abrir mão da qualidade, da performance ou do suporte dedicado que só a Inunda oferece.
