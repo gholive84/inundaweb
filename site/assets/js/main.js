@@ -81,6 +81,21 @@ const observer = new IntersectionObserver((entries) => {
 
 revealEls.forEach(el => observer.observe(el));
 
+/* ===== SERVICE BLOCKS IN-VIEW ===== */
+const serviceBlocks = document.querySelectorAll('.service-block');
+if (serviceBlocks.length) {
+    const blockObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('in-view');
+                blockObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.12 });
+
+    serviceBlocks.forEach(block => blockObserver.observe(block));
+}
+
 /* ===== SMOOTH SCROLL ===== */
 document.querySelectorAll('a[href^="#"]').forEach(link => {
     link.addEventListener('click', e => {

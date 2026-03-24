@@ -239,8 +239,18 @@
 .service-block {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    min-height: 520px;
+    min-height: 580px;
     overflow: hidden;
+    /* entrada suave via JS */
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1),
+                transform 0.7s cubic-bezier(0.22,1,0.36,1);
+}
+
+.service-block.in-view {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .service-block--reverse {
@@ -250,6 +260,7 @@
     direction: ltr;
 }
 
+/* ---- imagem com gradiente de transição ---- */
 .service-block__image {
     position: relative;
     overflow: hidden;
@@ -260,28 +271,92 @@
     height: 100%;
     object-fit: cover;
     display: block;
-    transition: transform 0.6s ease;
+    transform: scale(1.05);
+    transition: transform 1s cubic-bezier(0.22,1,0.36,1);
+    filter: brightness(0.85);
 }
 
+/* quando entra na tela: zoom out suave */
+.service-block.in-view .service-block__image img {
+    transform: scale(1);
+}
+
+/* hover: zoom sutil */
 .service-block:hover .service-block__image img {
     transform: scale(1.04);
+    filter: brightness(0.95);
+    transition: transform 0.6s ease, filter 0.4s ease;
 }
 
+/* gradiente que funde imagem com o conteúdo */
+.service-block__image::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right,
+        transparent 45%,
+        rgba(11,17,32,0.6) 75%,
+        #0b1120 100%
+    );
+    z-index: 1;
+    pointer-events: none;
+}
+
+.service-block--reverse .service-block__image::after {
+    background: linear-gradient(to left,
+        transparent 45%,
+        rgba(11,17,32,0.6) 75%,
+        #0b1120 100%
+    );
+}
+
+.service-block--ia .service-block__image::after {
+    background: linear-gradient(to right,
+        transparent 45%,
+        rgba(8,15,30,0.6) 75%,
+        #080f1e 100%
+    );
+}
+
+/* ---- conteúdo ---- */
 .service-block__content {
     background: #0b1120;
-    padding: 72px 64px;
+    padding: 80px 64px 80px 56px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 20px;
-    border-top: 1px solid rgba(255,255,255,0.06);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
+    gap: 22px;
+    position: relative;
+    /* linha lateral tênue */
+    border-top: 1px solid rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.service-block--reverse .service-block__content {
+    padding: 80px 56px 80px 64px;
 }
 
 .service-block--ia .service-block__content {
     background: #080f1e;
-    border-left: 1px solid rgba(34,211,238,0.08);
 }
+
+/* conteúdo entra com delay após o bloco */
+.service-block__content > * {
+    opacity: 0;
+    transform: translateX(-16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.service-block--reverse .service-block__content > * {
+    transform: translateX(16px);
+}
+
+.service-block.in-view .service-block__content > *:nth-child(1) { opacity:1; transform:none; transition-delay:0.15s; }
+.service-block.in-view .service-block__content > *:nth-child(2) { opacity:1; transform:none; transition-delay:0.25s; }
+.service-block.in-view .service-block__content > *:nth-child(3) { opacity:1; transform:none; transition-delay:0.35s; }
+.service-block.in-view .service-block__content > *:nth-child(4) { opacity:1; transform:none; transition-delay:0.42s; }
+.service-block.in-view .service-block__content > *:nth-child(5) { opacity:1; transform:none; transition-delay:0.48s; }
+.service-block.in-view .service-block__content > *:nth-child(6) { opacity:1; transform:none; transition-delay:0.54s; }
 
 .service-block__title {
     font-size: clamp(2rem, 3vw, 2.75rem);
@@ -707,7 +782,7 @@
 
 /* ===== LOGO IMG ===== */
 .logo__img {
-    height: 36px;
+    height: 26px;
     width: auto;
     display: block;
     /* logo é branca por padrão */
