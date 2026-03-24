@@ -1,8 +1,39 @@
 <?php
 $root = dirname(__DIR__);
 
-// Load all posts
-$all_posts = include $root . '/site/data/blog-posts.php';
+// Load posts from DB, fallback to static file
+$all_posts = [];
+try {
+    $cms_boot = $root . '/cms/boot.php';
+    if (!function_exists('db') && file_exists($cms_boot)) {
+        require_once $cms_boot;
+    }
+    if (function_exists('db')) {
+        $rows = db()->query(
+            "SELECT * FROM posts WHERE status = 'published' ORDER BY created_at DESC"
+        )->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($rows as $r) {
+            $dt = new DateTime($r['created_at']);
+            $months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+            $all_posts[] = [
+                'slug'           => $r['slug'],
+                'category'       => $r['category']      ?? '',
+                'category_slug'  => $r['category_slug'] ?? '',
+                'title'          => $r['title'],
+                'excerpt'        => $r['excerpt']        ?? '',
+                'image'          => $r['image_url']      ?? '',
+                'date_formatted' => $dt->format('d') . ' ' . $months[(int)$dt->format('m') - 1] . ' ' . $dt->format('Y'),
+                'read_time'      => $r['read_time']      ?? '',
+                'content'        => $r['content']        ?? '',
+            ];
+        }
+    }
+} catch (Exception $e) {}
+
+// Fallback: static file (legacy posts)
+if (empty($all_posts)) {
+    $all_posts = include $root . '/site/data/blog-posts.php';
+}
 
 // ── Determine view mode ───────────────────────────────────────────────────────
 $post_slug = isset($_GET['post']) ? trim($_GET['post']) : '';

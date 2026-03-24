@@ -1,6 +1,36 @@
 <?php
-$posts = include dirname(__DIR__) . '/data/blog-posts.php';
-$posts = array_slice($posts, 0, 3);
+$posts = [];
+try {
+    $cms_boot = dirname(dirname(__DIR__)) . '/cms/boot.php';
+    if (!function_exists('db') && file_exists($cms_boot)) {
+        require_once $cms_boot;
+    }
+    if (function_exists('db')) {
+        $rows = db()->query(
+            "SELECT * FROM posts WHERE status = 'published' ORDER BY created_at DESC LIMIT 3"
+        )->fetchAll(PDO::FETCH_ASSOC);
+        $months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+        foreach ($rows as $r) {
+            $dt = new DateTime($r['created_at']);
+            $posts[] = [
+                'slug'           => $r['slug'],
+                'category'       => $r['category']      ?? '',
+                'category_slug'  => $r['category_slug'] ?? '',
+                'title'          => $r['title'],
+                'excerpt'        => $r['excerpt']        ?? '',
+                'image'          => $r['image_url']      ?? '',
+                'date_formatted' => $dt->format('d') . ' ' . $months[(int)$dt->format('m') - 1] . ' ' . $dt->format('Y'),
+                'read_time'      => $r['read_time']      ?? '',
+                'content'        => $r['content']        ?? '',
+            ];
+        }
+    }
+} catch (Exception $e) {}
+
+// Fallback to static file
+if (empty($posts)) {
+    $posts = array_slice(include dirname(__DIR__) . '/data/blog-posts.php', 0, 3);
+}
 ?>
 <section class="blog-preview" id="blog">
     <div class="container">
