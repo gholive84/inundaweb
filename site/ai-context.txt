@@ -1,0 +1,113 @@
+# Contexto do Site — Inunda IA
+# Este arquivo é lido automaticamente pela IA ao editar páginas.
+# Edite aqui para manter a IA sempre atualizada.
+
+## Estrutura de arquivos PHP
+Todas as páginas internas usam este padrão:
+```php
+<?php
+$root         = dirname(__DIR__);
+$page_title   = 'Título da Página';
+$page_description = 'Descrição para SEO';
+require_once $root . '/includes/head-page.php';
+require_once $root . '/../site/includes/header.php'; // ou require header diretamente
+?>
+<!-- conteúdo HTML -->
+<?php require_once $root . '/includes/footer.php'; ?>
+```
+
+## CSS carregado em todas as páginas (head-page.php)
+Os seguintes arquivos CSS são incluídos automaticamente — use as classes definidas neles:
+- /site/assets/css/reset.css
+- /site/assets/css/variables.css  ← variáveis CSS globais
+- /site/assets/css/global.css     ← tipografia, layout base
+- /site/assets/css/components.css ← botões, cards, badges, forms
+- /site/assets/css/sections.css   ← seções hero, services, etc.
+- /site/assets/css/inner-pages.css ← estilos de páginas internas
+- /site/assets/css/responsive.css ← breakpoints mobile
+
+## Variáveis CSS disponíveis (variables.css)
+```css
+--color-primary:      #22d3ee;
+--color-primary-dark: #06b6d4;
+--color-dark:         #0f172a;
+--color-dark-2:       #1e293b;
+--color-light:        #f8fafc;
+--color-white:        #ffffff;
+--color-text:         #0f172a;
+--color-muted:        #64748b;
+--color-border:       #e2e8f0;
+--color-border-dark:  rgba(255,255,255,0.08);
+--gradient-accent:    linear-gradient(135deg, #22d3ee 0%, #06b6d4 100%);
+--font-base:          'Inter', -apple-system, sans-serif;
+--radius-sm:  8px;
+--radius-md:  12px;
+--radius-lg:  16px;
+--shadow-card: 0 4px 24px rgba(0,0,0,0.06);
+```
+
+## Classes de botões (components.css)
+```html
+<a href="#" class="btn btn--gradient">CTA Principal</a>     <!-- fundo ciano, texto escuro -->
+<a href="#" class="btn btn--ghost">Secundário</a>            <!-- borda branca, fundo dark -->
+<a href="#" class="btn btn--accent">Outline ciano</a>        <!-- borda ciano, fundo transparente -->
+<a href="#" class="btn btn--outline-dark">Outline dark</a>   <!-- borda ciano, fundo claro -->
+<a href="#" class="btn btn--gradient btn--lg">Grande</a>     <!-- versão maior -->
+```
+
+## Fontes carregadas no head
+- Inter (400, 500, 600, 700, 800) via Google Fonts
+
+## Bibliotecas JS
+Nenhuma lib JS é carregada globalmente por padrão.
+Para adicionar ao criar/editar uma seção, inclua o CDN dentro do próprio arquivo PHP da página.
+
+### Swiper.js v11 — Carrosséis / Sliders
+Incluir antes de </body>:
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+
+<div class="swiper meu-swiper">
+  <div class="swiper-wrapper">
+    <div class="swiper-slide"><!-- slide 1 --></div>
+    <div class="swiper-slide"><!-- slide 2 --></div>
+    <div class="swiper-slide"><!-- slide 3 --></div>
+  </div>
+  <div class="swiper-pagination"></div>
+  <div class="swiper-button-prev"></div>
+  <div class="swiper-button-next"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+new Swiper('.meu-swiper', {
+    loop: true,
+    pagination: { el: '.swiper-pagination', clickable: true },
+    navigation: true,
+    slidesPerView: 1,
+    spaceBetween: 24,
+    breakpoints: {
+        768:  { slidesPerView: 2 },
+        1024: { slidesPerView: 3 }
+    }
+});
+</script>
+```
+
+### AOS (Animate on Scroll) — Animações ao rolar
+```html
+<link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<!-- adicionar data-aos="fade-up" nos elementos -->
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<script>AOS.init({ duration: 600, once: true });</script>
+```
+
+## Identidade visual resumida
+- Cor principal: #22d3ee (ciano)
+- Fundo escuro de seções: #0F172A
+- Gradiente padrão: linear-gradient(135deg, #22d3ee, #06b6d4)
+- Fonte: Inter
+- Seções alternam entre fundo escuro (#0f172a) e claro (#f8fafc / #fff)
+- Border-radius de cards: 12px–16px
+- Padding vertical de seções: 80px–120px
+- Container máximo: max-width 1200px centralizado

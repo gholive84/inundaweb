@@ -41,7 +41,11 @@ $current_content = file_get_contents($pagina['file_path']);
 // OpenAI settings
 $api_key        = setting('openai_key', '');
 $model          = setting('openai_model', 'gpt-4o');
-$site_context   = trim(setting('openai_context', ''));
+$extra_context  = trim(setting('openai_context', ''));
+
+// Auto-load site context file
+$context_file = $_SERVER['DOCUMENT_ROOT'] . '/site/ai-context.txt';
+$site_context = file_exists($context_file) ? trim(file_get_contents($context_file)) : '';
 
 if (!$api_key) {
     echo json_encode(['ok' => false, 'error' => 'Chave OpenAI não configurada. Vá em Configurações → Inteligência Artificial.']);
@@ -68,9 +72,14 @@ Identidade visual do site:
 
 PROMPT;
 
-// Append site-specific context from settings (libraries, CSS classes, etc.)
+// Append site context from ai-context.txt (design tokens, CSS classes, available libs)
 if ($site_context !== '') {
-    $system_prompt .= "\n\nContexto específico do site (use para saber quais bibliotecas e classes estão disponíveis):\n" . $site_context;
+    $system_prompt .= "\n\n" . $site_context;
+}
+
+// Append additional context from CMS settings (user-defined overrides/complements)
+if ($extra_context !== '') {
+    $system_prompt .= "\n\n## Contexto adicional (configurado pelo usuário):\n" . $extra_context;
 }
 
 $user_prompt = "Instrução do usuário: {$instruction}\n\nArquivo PHP atual:\n{$current_content}";

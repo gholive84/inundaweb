@@ -192,20 +192,24 @@ require_once dirname(__DIR__) . '/includes/head.php';
         </div>
 
         <div class="form-group form-group--full">
-          <label>Contexto do site para a IA</label>
-          <textarea name="openai_context" style="min-height:220px;font-family:monospace;font-size:.8125rem"
-                    placeholder="Descreva as bibliotecas JS disponíveis, classes CSS personalizadas, estrutura do layout, etc.
-
-Exemplo:
-## Bibliotecas JS disponíveis
-- Swiper.js v11 (CDN): carrosséis/sliders
-  <link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css&quot;>
-  <script src=&quot;https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js&quot;></script>
-
-## Classes CSS do site
-- .btn--gradient, .btn--ghost, .btn--accent
-- .section-dark (fundo #0F172A), .section-light (fundo #fff)"><?= h(setting('openai_context')) ?></textarea>
-          <span class="form-hint">Este texto é injetado automaticamente no system prompt da IA toda vez que ela editar uma página. Use para informar libs disponíveis, classes CSS, padrões do projeto.</span>
+          <?php
+          $ctx_file = $_SERVER['DOCUMENT_ROOT'] . '/site/ai-context.txt';
+          $ctx_exists = file_exists($ctx_file);
+          ?>
+          <label>Contexto adicional para a IA</label>
+          <?php if ($ctx_exists): ?>
+          <div class="flash flash--info" style="margin-bottom:10px;font-size:.8125rem">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+            O arquivo <code style="background:rgba(255,255,255,.08);padding:1px 5px;border-radius:3px">/site/ai-context.txt</code> é carregado automaticamente — ele já contém os tokens de design, classes CSS e bibliotecas disponíveis. Use o campo abaixo apenas para complementar.
+          </div>
+          <?php else: ?>
+          <div class="flash flash--warning" style="margin-bottom:10px;font-size:.8125rem">
+            Arquivo <code>/site/ai-context.txt</code> não encontrado. A IA usará apenas o contexto abaixo.
+          </div>
+          <?php endif; ?>
+          <textarea name="openai_context" style="min-height:160px;font-family:monospace;font-size:.8125rem"
+                    placeholder="Informações adicionais, overrides ou libs extras que a IA deve saber..."><?= h(setting('openai_context')) ?></textarea>
+          <span class="form-hint">Injetado após o <code>ai-context.txt</code> no system prompt. Use para libs extras, padrões específicos de uma campanha, etc.</span>
         </div>
 
       </div>
