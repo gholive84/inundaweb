@@ -10,6 +10,32 @@
     }
 }
 
+/* ===== SERVICE BLOCKS TABLET ===== */
+@media (max-width: 900px) {
+    .service-block,
+    .service-block--reverse {
+        grid-template-columns: 1fr;
+        direction: ltr;
+        min-height: auto;
+    }
+
+    .service-block--reverse > * {
+        direction: ltr;
+    }
+
+    .service-block__image {
+        height: 280px;
+    }
+
+    .service-block__content {
+        padding: 48px 32px;
+    }
+
+    .mega-menu__grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* ===== TABLET (768px) ===== */
 @media (max-width: 1024px) {
     .services__grid {

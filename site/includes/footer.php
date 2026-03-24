@@ -24,6 +24,7 @@
                 <ul>
                     <li><a href="/projetos-wordpress-premium/">Projetos WordPress</a></li>
                     <li><a href="/suporte-wordpress-premium/">Suporte & Hosting</a></li>
+                    <li><a href="/sites-ia/">Sites com IA</a></li>
                 </ul>
             </div>
             <div class="footer__col">
