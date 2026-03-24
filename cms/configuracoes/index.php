@@ -39,6 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $key = trim($_POST['openai_key'] ?? '');
         if ($key !== '') setting_save('openai_key', $key);
         setting_save('openai_model', trim($_POST['openai_model'] ?? 'gpt-4o'));
+        setting_save('openai_context', trim($_POST['openai_context'] ?? ''));
         flash_set('success', 'Configurações de IA salvas.');
         header('Location: ' . CMS_URL . '/configuracoes/?tab=ia');
         exit;
@@ -188,6 +189,23 @@ require_once dirname(__DIR__) . '/includes/head.php';
             <option value="<?= $m ?>" <?= setting('openai_model','gpt-4o') === $m ? 'selected' : '' ?>><?= $m ?></option>
             <?php endforeach; ?>
           </select>
+        </div>
+
+        <div class="form-group form-group--full">
+          <label>Contexto do site para a IA</label>
+          <textarea name="openai_context" style="min-height:220px;font-family:monospace;font-size:.8125rem"
+                    placeholder="Descreva as bibliotecas JS disponíveis, classes CSS personalizadas, estrutura do layout, etc.
+
+Exemplo:
+## Bibliotecas JS disponíveis
+- Swiper.js v11 (CDN): carrosséis/sliders
+  <link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css&quot;>
+  <script src=&quot;https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js&quot;></script>
+
+## Classes CSS do site
+- .btn--gradient, .btn--ghost, .btn--accent
+- .section-dark (fundo #0F172A), .section-light (fundo #fff)"><?= h(setting('openai_context')) ?></textarea>
+          <span class="form-hint">Este texto é injetado automaticamente no system prompt da IA toda vez que ela editar uma página. Use para informar libs disponíveis, classes CSS, padrões do projeto.</span>
         </div>
 
       </div>

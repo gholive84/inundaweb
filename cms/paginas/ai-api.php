@@ -38,9 +38,10 @@ if (!$pagina || !file_exists($pagina['file_path'])) {
 
 $current_content = file_get_contents($pagina['file_path']);
 
-// OpenAI key
-$api_key = setting('openai_key', '');
-$model   = setting('openai_model', 'gpt-4o');
+// OpenAI settings
+$api_key        = setting('openai_key', '');
+$model          = setting('openai_model', 'gpt-4o');
+$site_context   = trim(setting('openai_context', ''));
 
 if (!$api_key) {
     echo json_encode(['ok' => false, 'error' => 'Chave OpenAI não configurada. Vá em Configurações → Inteligência Artificial.']);
@@ -65,21 +66,12 @@ Identidade visual do site:
 - Fonte: Inter
 - Botões: .btn--gradient, .btn--ghost, .btn--accent
 
-Biblioteca disponível para carrosséis/sliders: Swiper.js v11
-Quando o usuário pedir carrossel, use EXATAMENTE este padrão:
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
-<div class="swiper meu-swiper">
-  <div class="swiper-wrapper">
-    <div class="swiper-slide"><!-- slide 1 --></div>
-    <div class="swiper-slide"><!-- slide 2 --></div>
-  </div>
-  <div class="swiper-pagination"></div>
-  <div class="swiper-button-prev"></div>
-  <div class="swiper-button-next"></div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script>new Swiper('.meu-swiper', { loop: true, pagination: { el: '.swiper-pagination', clickable: true }, navigation: true });</script>
 PROMPT;
+
+// Append site-specific context from settings (libraries, CSS classes, etc.)
+if ($site_context !== '') {
+    $system_prompt .= "\n\nContexto específico do site (use para saber quais bibliotecas e classes estão disponíveis):\n" . $site_context;
+}
 
 $user_prompt = "Instrução do usuário: {$instruction}\n\nArquivo PHP atual:\n{$current_content}";
 
