@@ -3,6 +3,10 @@ DirectoryIndex index.php index.html
 
 RewriteEngine On
 
+# CMS — acesso via /cms (pasta real, sem rewrite necessário)
+# Protege install.php de acesso externo após instalação (descomente após instalar)
+# RewriteRule ^cms/install\.php$ - [F,L]
+
 # Blog
 RewriteRule ^blog/?$ blog/index.php [L]
 

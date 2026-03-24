@@ -24,5 +24,19 @@
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/site/assets/img/favicon.svg">
+
+    <!-- Códigos de cabeçalho (Analytics, GTM, etc.) gerenciados via CMS -->
+    <?php
+    try {
+        if (!function_exists('db')) {
+            $cms_config = $_SERVER['DOCUMENT_ROOT'] . '/cms/boot.php';
+            if (file_exists($cms_config)) require_once $cms_config;
+        }
+        if (function_exists('setting')) {
+            $hc = setting('header_codes', '');
+            if ($hc !== '') echo $hc . "\n    ";
+        }
+    } catch (Exception $e) {}
+    ?>
 </head>
 <body>
