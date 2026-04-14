@@ -191,6 +191,10 @@
     color: var(--color-white);
 }
 
+.logo__accent {
+    color: var(--color-accent);
+}
+
 /* ===== NAV ===== */
 .nav {
     margin-left: auto;

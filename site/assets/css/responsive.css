@@ -251,3 +251,16 @@
         grid-column: auto;
     }
 }
+
+/* ===== SERVICES EXTRA RESPONSIVE ===== */
+@media (max-width: 900px) {
+    .services-extra__grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .services-extra__grid {
+        grid-template-columns: 1fr;
+    }
+}

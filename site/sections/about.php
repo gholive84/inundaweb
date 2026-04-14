@@ -2,33 +2,33 @@
     <div class="container about__inner">
         <div class="about__content">
             <span class="label">Nossa história</span>
-            <h2 class="section-title">Mais que tecnologia.<br><span class="text--accent">Parceria estratégica.</span></h2>
+            <h2 class="section-title">28 anos de qualidade.<br><span class="text--accent">Sua impressão em boas mãos.</span></h2>
             <p class="about__text">
-                Há mais de 15 anos construímos soluções WordPress para empresas que não se contentam com o comum. Não somos uma agência de sites — somos o time técnico que sua empresa precisa ao lado.
+                Desde 1997 a JZ Gráfica é referência em impressão em Curitiba. Começamos com offset e crescemos para o digital, UV e corte a laser — sempre com o mesmo compromisso: entregar o melhor produto no prazo certo.
             </p>
             <p class="about__text">
-                Combinamos expertise técnica com visão de negócio para entregar resultados que vão além do código: mais velocidade, mais segurança e mais crescimento para nossos clientes.
+                Atendemos desde o autônomo que precisa de 100 cartões até grandes empresas que demandam tiragens industriais e materiais de comunicação visual. Qualidade e agilidade para todos.
             </p>
             <div class="about__values">
+                <div class="value">
+                    <div class="value__icon">🖨️</div>
+                    <div>
+                        <h4>Qualidade</h4>
+                        <p>Equipamentos modernos e acabamento profissional em cada pedido</p>
+                    </div>
+                </div>
                 <div class="value">
                     <div class="value__icon">⚡</div>
                     <div>
                         <h4>Agilidade</h4>
-                        <p>Entregas rápidas sem abrir mão da qualidade</p>
-                    </div>
-                </div>
-                <div class="value">
-                    <div class="value__icon">🔒</div>
-                    <div>
-                        <h4>Segurança</h4>
-                        <p>Conformidade com LGPD e melhores práticas de segurança</p>
+                        <p>Prazos cumpridos sem abrir mão da qualidade final</p>
                     </div>
                 </div>
                 <div class="value">
                     <div class="value__icon">🤝</div>
                     <div>
-                        <h4>Parceria</h4>
-                        <p>Não terceirizamos — somos seu time</p>
+                        <h4>Atendimento</h4>
+                        <p>Orientação especializada do orçamento à entrega</p>
                     </div>
                 </div>
             </div>
@@ -36,16 +36,16 @@
         <div class="about__visual">
             <div class="about__stats-card">
                 <div class="big-stat">
-                    <span class="big-stat__number">15+</span>
+                    <span class="big-stat__number">28+</span>
                     <span class="big-stat__label">anos no mercado</span>
                 </div>
                 <div class="big-stat">
-                    <span class="big-stat__number">200+</span>
-                    <span class="big-stat__label">clientes de suporte</span>
+                    <span class="big-stat__number">UV</span>
+                    <span class="big-stat__label">impressão em qualquer superfície</span>
                 </div>
                 <div class="big-stat">
-                    <span class="big-stat__number">500+</span>
-                    <span class="big-stat__label">projetos entregues</span>
+                    <span class="big-stat__number">Laser</span>
+                    <span class="big-stat__label">corte de alta precisão</span>
                 </div>
             </div>
         </div>

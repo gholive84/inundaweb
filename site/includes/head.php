@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Inunda — Tecnologia que flui com seu negócio. WordPress empresarial, suporte premium e hospedagem.">
-    <title>Inunda — Tecnologia que flui com seu negócio</title>
+    <meta name="description" content="JZ Gráfica Digital — 28 anos imprimindo com qualidade em Curitiba. Impressão digital, livros, materiais corporativos, comunicação visual, UV e corte a laser.">
+    <title>JZ Gráfica Digital — 28 anos imprimindo com qualidade</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

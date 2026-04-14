@@ -1,39 +1,27 @@
 <section class="hero" id="inicio">
 
-    <!-- Vídeo YouTube como background -->
-    <div class="hero__video-wrap" aria-hidden="true">
-        <iframe
-            class="hero__video"
-            src="https://www.youtube.com/embed/HXJEakm65FI?autoplay=1&mute=1&loop=1&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&playsinline=1&playlist=HXJEakm65FI"
-            allow="autoplay; encrypted-media"
-            allowfullscreen
-            title=""
-            loading="lazy">
-        </iframe>
-    </div>
-
-    <!-- Overlay escuro sobre o vídeo -->
+    <!-- Overlay escuro -->
     <div class="hero__overlay" aria-hidden="true"></div>
 
-    <!-- Gradiente decorativo (mantém profundidade) -->
+    <!-- Gradiente decorativo -->
     <div class="hero__bg"></div>
 
     <!-- Conteúdo -->
     <div class="container">
-        <div class="hero__inner">
+        <div class="hero__inner hero__inner--centered">
             <div class="hero__content">
-                <span class="label">Agência WordPress Empresarial</span>
+                <span class="label">Gráfica Digital, Offset & Comunicação Visual</span>
                 <h1 class="hero__title">
-                    Tecnologia que<br>
-                    <span class="text--gradient">flui</span> com seu negócio
+                    28 anos imprimindo<br>
+                    com <span class="text--gradient">qualidade</span>
                 </h1>
                 <p class="hero__subtitle">
-                    Desenvolvimento WordPress premium, suporte especializado e hospedagem de alta performance para médias e grandes empresas.
+                    Impressão digital e offset, livros, apostilas, materiais corporativos, comunicação visual e muito mais — tudo em Curitiba, com agilidade e acabamento profissional.
                 </p>
                 <div class="hero__actions">
-                    <a href="https://wa.me/5541992050559?text=Olá! Quero saber mais sobre os projetos WordPress da Inunda."
+                    <a href="https://wa.me/5541991728599?text=Olá! Gostaria de solicitar um orçamento."
                        class="btn btn--gradient btn--lg" target="_blank" rel="noopener">
-                        Agendar conversa
+                        Solicitar Orçamento
                     </a>
                     <a href="#servicos" class="btn btn--ghost btn--lg">
                         Ver serviços
@@ -41,25 +29,22 @@
                 </div>
                 <div class="hero__stats">
                     <div class="stat">
-                        <span class="stat__number">15+</span>
+                        <span class="stat__number">28+</span>
                         <span class="stat__label">Anos de experiência</span>
                     </div>
                     <div class="stat">
-                        <span class="stat__number">200+</span>
-                        <span class="stat__label">Clientes ativos</span>
+                        <span class="stat__number">100%</span>
+                        <span class="stat__label">Digital & Offset</span>
                     </div>
                     <div class="stat">
-                        <span class="stat__number">98%</span>
-                        <span class="stat__label">Satisfação</span>
+                        <span class="stat__number">UV</span>
+                        <span class="stat__label">Impressão inovadora</span>
                     </div>
                     <div class="stat">
-                        <span class="stat__number">500+</span>
-                        <span class="stat__label">Projetos entregues</span>
+                        <span class="stat__number">Laser</span>
+                        <span class="stat__label">Corte de precisão</span>
                     </div>
                 </div>
-            </div>
-            <div class="hero__rocket" aria-hidden="true">
-                <img src="/site/assets/img/hero-rocket.svg" alt="" width="480" height="560">
             </div>
         </div>
     </div>

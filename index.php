@@ -13,7 +13,6 @@ include ROOT . '/site/sections/hero.php';
 include ROOT . '/site/sections/clients.php';
 include ROOT . '/site/sections/services.php';
 include ROOT . '/site/sections/about.php';
-include ROOT . '/site/sections/blog-preview.php';
 include ROOT . '/site/sections/contact.php';
 include ROOT . '/site/sections/cta.php';
 include ROOT . '/site/includes/footer.php';
