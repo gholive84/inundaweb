@@ -23,7 +23,7 @@
     html, body { height: 100%; overflow: hidden; font-family: var(--font); background: var(--bg); color: #e2e8f0; }
 
     /* ── Layout ── */
-    .wrap { display: flex; height: 100vh; overflow: hidden; }
+    .wrap { display: flex; height: 100dvh; overflow: hidden; }
 
     /* ── Left panel ── */
     .panel {
@@ -33,7 +33,7 @@
       border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
-      height: 100vh;
+      height: 100dvh;
     }
 
     /* ── Header ── */
@@ -375,13 +375,78 @@
 
     /* ── Spin animation ── */
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Mobile tabs ── */
+    .mob-tabs {
+      display: none;
+      flex-shrink: 0;
+      background: var(--sidebar);
+      border-bottom: 1px solid var(--border);
+    }
+    .mob-tab {
+      flex: 1;
+      padding: 12px 0;
+      background: none;
+      border: none;
+      font-family: var(--font);
+      font-size: .8125rem;
+      font-weight: 600;
+      color: rgba(255,255,255,.4);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all .18s;
+    }
+    .mob-tab.active {
+      color: #fff;
+      border-bottom-color: var(--red);
+    }
+
+    /* ── Input safe area ── */
+    .input-area {
+      padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 767px) {
+      .wrap { flex-direction: column; }
+
+      .mob-tabs { display: flex; }
+
+      .panel {
+        width: 100%;
+        height: 0;
+        flex: 1;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        display: none;
+      }
+      .panel.mob-active { display: flex; }
+
+      .preview {
+        display: none;
+      }
+      .preview.mob-active { display: flex; }
+
+      .panel__tips { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 8px; }
+      .panel__tips::-webkit-scrollbar { height: 3px; }
+      .panel__tips::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 2px; }
+
+      .preview__bar { display: none; }
+      .preview__iframe { height: 100%; }
+    }
   </style>
 </head>
 <body>
 <div class="wrap">
 
+  <!-- ══ ABAS MOBILE ══ -->
+  <div class="mob-tabs" id="mobTabs">
+    <button class="mob-tab active" id="tabChat" onclick="switchTab('chat')">💬 Chat IA</button>
+    <button class="mob-tab" id="tabPreview" onclick="switchTab('preview')">👁️ Preview</button>
+  </div>
+
   <!-- ══ PAINEL ESQUERDO ══ -->
-  <div class="panel">
+  <div class="panel mob-active" id="panelChat">
 
     <!-- Cabeçalho -->
     <div class="panel__head">
@@ -459,7 +524,7 @@
   </div>
 
   <!-- ══ PREVIEW ══ -->
-  <div class="preview">
+  <div class="preview" id="panelPreview">
     <div class="preview__bar">
       <div class="preview__dots">
         <span></span><span></span><span></span>
@@ -549,6 +614,7 @@ async function send() {
       status.className = 'preview__status status--modified';
       actions.classList.add('on');
       setLocked(true);
+      maybeSwitchToPreview();
     }
   } catch (err) {
     t.remove();
@@ -622,6 +688,32 @@ inp.addEventListener('input', () => {
 });
 
 inp.focus();
+
+/* ══ Abas mobile ══ */
+function switchTab(tab) {
+  const chat    = document.getElementById('panelChat');
+  const preview = document.getElementById('panelPreview');
+  const tChat   = document.getElementById('tabChat');
+  const tPrev   = document.getElementById('tabPreview');
+
+  if (tab === 'chat') {
+    chat.classList.add('mob-active');
+    preview.classList.remove('mob-active');
+    tChat.classList.add('active');
+    tPrev.classList.remove('active');
+    inp.focus();
+  } else {
+    preview.classList.add('mob-active');
+    chat.classList.remove('mob-active');
+    tPrev.classList.add('active');
+    tChat.classList.remove('active');
+  }
+}
+
+/* ── Ao gerar preview, auto-switch para aba preview no mobile ── */
+function maybeSwitchToPreview() {
+  if (window.innerWidth <= 767) switchTab('preview');
+}
 
 /* ══ Gravação de áudio ══ */
 const micBtn  = document.getElementById('micBtn');
