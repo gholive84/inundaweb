@@ -221,6 +221,73 @@ $page_title = 'Alterar com IA — ' . $pagina['title'];
     .ai-chat__send:hover { background: var(--a-primary-dark); }
     .ai-chat__send:disabled { opacity: .5; cursor: not-allowed; }
 
+    /* ── Mic button ── */
+    .ai-chat__mic {
+      width: 40px;
+      height: 40px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all .18s;
+      color: rgba(255,255,255,0.7);
+    }
+    .ai-chat__mic:hover {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      border-color: rgba(255,255,255,0.25);
+    }
+    .ai-chat__mic:disabled { opacity: .4; cursor: not-allowed; }
+
+    .ai-chat__mic--recording {
+      background: rgba(239,68,68,0.15) !important;
+      border-color: rgba(239,68,68,0.5) !important;
+      color: #ef4444 !important;
+      animation: mic-pulse 1.4s ease-in-out infinite;
+    }
+    .ai-chat__mic--processing {
+      background: rgba(245,158,11,0.12) !important;
+      border-color: rgba(245,158,11,0.3) !important;
+      color: #f59e0b !important;
+    }
+
+    @keyframes mic-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); }
+      50%       { box-shadow: 0 0 0 7px rgba(239,68,68,0); }
+    }
+
+    /* ── Recording status bar ── */
+    .ai-recording-bar {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.2);
+      border-radius: 6px;
+      margin-top: 8px;
+      font-size: .8125rem;
+      color: #fca5a5;
+    }
+    .ai-recording-bar.visible { display: flex; }
+    .ai-recording-bar__dot {
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      flex-shrink: 0;
+      animation: mic-pulse 1.4s ease-in-out infinite;
+    }
+    .ai-recording-bar__timer {
+      margin-left: auto;
+      font-variant-numeric: tabular-nums;
+      color: rgba(255,255,255,0.4);
+    }
+
     .ai-chat__actions {
       display: flex;
       gap: 8px;
@@ -343,9 +410,26 @@ $page_title = 'Alterar com IA — ' . $pagina['title'];
           placeholder="Ex: Mude a cor do botão principal para verde, adicione uma seção de FAQ..."
           rows="2"
         ></textarea>
+        <!-- Mic button -->
+        <button class="ai-chat__mic" id="micBtn" title="Gravar áudio (clique para iniciar)">
+          <!-- ícone: microfone -->
+          <svg id="micIcon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <rect x="9" y="2" width="6" height="12" rx="3"/>
+            <path d="M19 10a7 7 0 0 1-14 0"/>
+            <line x1="12" y1="19" x2="12" y2="22"/>
+            <line x1="8" y1="22" x2="16" y2="22"/>
+          </svg>
+        </button>
         <button class="ai-chat__send" id="sendBtn" title="Enviar (Ctrl+Enter)">
           <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         </button>
+      </div>
+
+      <!-- Barra de status de gravação -->
+      <div class="ai-recording-bar" id="recordingBar">
+        <span class="ai-recording-bar__dot"></span>
+        <span>Gravando... clique no microfone para parar</span>
+        <span class="ai-recording-bar__timer" id="recordingTimer">0:00</span>
       </div>
 
       <div class="ai-chat__actions" id="chatActions" style="display:none">
@@ -637,6 +721,150 @@ input.addEventListener('input', () => {
 });
 
 input.focus();
+
+/* ══ Audio Recording ══ */
+const micBtn       = document.getElementById('micBtn');
+const micIcon      = document.getElementById('micIcon');
+const recordingBar = document.getElementById('recordingBar');
+const recTimer     = document.getElementById('recordingTimer');
+
+const MIC_ICON = `<svg id="micIcon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+  <rect x="9" y="2" width="6" height="12" rx="3"/>
+  <path d="M19 10a7 7 0 0 1-14 0"/>
+  <line x1="12" y1="19" x2="12" y2="22"/>
+  <line x1="8" y1="22" x2="16" y2="22"/>
+</svg>`;
+
+const STOP_ICON = `<svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+  <rect x="5" y="5" width="14" height="14" rx="2"/>
+</svg>`;
+
+const SPIN_ICON = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin .7s linear infinite">
+  <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/>
+</svg>`;
+
+let mediaRecorder  = null;
+let audioChunks    = [];
+let isRecording    = false;
+let timerInterval  = null;
+let recordSeconds  = 0;
+
+/* ── Check browser support ── */
+if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
+    micBtn.title = 'Gravação de áudio não suportada neste navegador';
+    micBtn.disabled = true;
+    micBtn.style.opacity = '.3';
+}
+
+micBtn.addEventListener('click', () => {
+    if (isRecording) stopRecording();
+    else             startRecording();
+});
+
+async function startRecording() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+
+        // Prefer webm, fallback to ogg or default
+        const mimeType = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', '']
+            .find(m => !m || MediaRecorder.isTypeSupported(m)) ?? '';
+
+        mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : {});
+        audioChunks   = [];
+        recordSeconds = 0;
+
+        mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+        mediaRecorder.onstop = async () => {
+            stream.getTracks().forEach(t => t.stop());
+            const ext  = mediaRecorder.mimeType.includes('ogg') ? 'ogg' : 'webm';
+            const blob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
+            await transcribeAudio(blob, ext);
+        };
+
+        mediaRecorder.start(250); // collect chunks every 250ms
+        isRecording = true;
+
+        // UI: recording state
+        micBtn.classList.add('ai-chat__mic--recording');
+        micBtn.title = 'Parar gravação';
+        micBtn.innerHTML = STOP_ICON;
+        recordingBar.classList.add('visible');
+
+        // Timer
+        timerInterval = setInterval(() => {
+            recordSeconds++;
+            const m = Math.floor(recordSeconds / 60);
+            const s = String(recordSeconds % 60).padStart(2, '0');
+            recTimer.textContent = `${m}:${s}`;
+        }, 1000);
+
+    } catch (err) {
+        const msg = err.name === 'NotAllowedError'
+            ? 'Permissão de microfone negada. Habilite nas configurações do navegador.'
+            : 'Erro ao acessar microfone: ' + err.message;
+        addMsg(msg, 'error');
+    }
+}
+
+function stopRecording() {
+    if (!mediaRecorder || !isRecording) return;
+    clearInterval(timerInterval);
+    isRecording = false;
+
+    mediaRecorder.stop();
+
+    // UI: processing state
+    micBtn.classList.remove('ai-chat__mic--recording');
+    micBtn.classList.add('ai-chat__mic--processing');
+    micBtn.innerHTML = SPIN_ICON;
+    micBtn.disabled  = true;
+    micBtn.title     = 'Transcrevendo...';
+    recordingBar.classList.remove('visible');
+}
+
+async function transcribeAudio(blob, ext) {
+    const processingMsg = addMsg('🎙️ Transcrevendo áudio...', 'system');
+
+    try {
+        const formData = new FormData();
+        formData.append('audio', blob, `recording.${ext}`);
+        formData.append('csrf_token', CSRF_TOKEN);
+
+        const res  = await fetch(CMS_URL + '/paginas/audio-transcribe.php', {
+            method: 'POST',
+            body:   formData
+        });
+        const data = await res.json();
+
+        processingMsg.remove();
+
+        if (data.ok && data.text) {
+            // Coloca o texto transcrito no textarea para o usuário revisar
+            input.value = data.text;
+            input.style.height = 'auto';
+            input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+            input.focus();
+            // Seleciona o texto para facilitar edição
+            input.select();
+        } else {
+            addMsg('Erro na transcrição: ' + (data.error || 'Tente novamente.'), 'error');
+        }
+    } catch (err) {
+        processingMsg.remove();
+        addMsg('Erro ao enviar áudio: ' + err.message, 'error');
+    }
+
+    // Reset mic button
+    micBtn.classList.remove('ai-chat__mic--processing');
+    micBtn.disabled  = false;
+    micBtn.title     = 'Gravar áudio';
+    micBtn.innerHTML = MIC_ICON;
+}
+
+/* Spin keyframe (reutiliza a animação de loading) */
+const spinStyle = document.createElement('style');
+spinStyle.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
+document.head.appendChild(spinStyle);
 </script>
 </body>
 </html>
