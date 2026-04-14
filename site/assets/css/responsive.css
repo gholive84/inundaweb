@@ -186,6 +186,9 @@
     .services-extra__grid {
         grid-template-columns: 1fr;
     }
+    .extra-card__thumb {
+        height: 220px;
+    }
 
     /* About */
     .about__stats-card {

@@ -103,50 +103,81 @@
     </div>
 
     <!-- Grid de serviços adicionais -->
-    <div class="services-extra container">
-        <h3 class="services-extra__title">Também fazemos</h3>
-        <div class="services-extra__grid">
-            <div class="extra-card fade-up">
-                <div class="extra-card__icon">
-                    <img src="/site/assets/img/impressao-cartao.png" alt="" width="28" height="28" style="object-fit:contain;">
-                </div>
-                <h4>Cartões de Visita</h4>
-                <p>Couchê, verniz UV, laminação fosca ou brilhante</p>
+    <div class="services-extra">
+        <div class="container">
+            <div class="services-extra__head">
+                <span class="label">E muito mais</span>
+                <h2 class="services-extra__title">Também <span class="text--accent">fazemos</span></h2>
+                <p class="services-extra__sub">Além dos serviços principais, oferecemos uma linha completa de produtos gráficos para toda necessidade.</p>
             </div>
-            <div class="extra-card fade-up">
-                <div class="extra-card__icon">
-                    <img src="/site/assets/img/impressao-folder-flyer.png" alt="" width="28" height="28" style="object-fit:contain;">
-                </div>
-                <h4>Flyers & Folders</h4>
-                <p>Impressão frente e verso com dobras variadas</p>
-            </div>
-            <div class="extra-card fade-up">
-                <div class="extra-card__icon">
-                    <img src="/site/assets/img/impressao-certificado.png" alt="" width="28" height="28" style="object-fit:contain;">
-                </div>
-                <h4>Certificados</h4>
-                <p>Papel especial, hot-stamp e acabamentos premium</p>
-            </div>
-            <div class="extra-card fade-up">
-                <div class="extra-card__icon">
-                    <img src="/site/assets/img/impressao-comandas.png" alt="" width="28" height="28" style="object-fit:contain;">
-                </div>
-                <h4>Blocos e Comandas</h4>
-                <p>Formulários, receituários e blocos autocopiativos</p>
-            </div>
-            <div class="extra-card fade-up">
-                <div class="extra-card__icon">
-                    <img src="/site/assets/img/impressao-cadernos-agendas.png" alt="" width="28" height="28" style="object-fit:contain;">
-                </div>
-                <h4>Cadernos & Agendas</h4>
-                <p>Personalizados com capa e miolo sob medida</p>
-            </div>
-            <div class="extra-card fade-up">
-                <div class="extra-card__icon">
-                    <img src="/site/assets/img/impressao-laminacao-fosca-brilho.png" alt="" width="28" height="28" style="object-fit:contain;">
-                </div>
-                <h4>Acabamentos</h4>
-                <p>Laminação, corte guilhotina, vinco e dobra</p>
+            <div class="services-extra__grid">
+
+                <a href="https://wa.me/5541991728599?text=Olá%2C+quero+um+orçamento+de+cartões+de+visita." class="extra-card fade-up" target="_blank" rel="noopener">
+                    <div class="extra-card__thumb">
+                        <img src="/site/assets/img/impressao-cartao.png" alt="Cartões de Visita" loading="lazy">
+                    </div>
+                    <div class="extra-card__body">
+                        <h4>Cartões de Visita</h4>
+                        <p>Couchê, verniz UV, laminação fosca ou brilhante</p>
+                        <span class="extra-card__cta">Solicitar orçamento →</span>
+                    </div>
+                </a>
+
+                <a href="https://wa.me/5541991728599?text=Olá%2C+quero+um+orçamento+de+flyers+e+folders." class="extra-card fade-up" target="_blank" rel="noopener">
+                    <div class="extra-card__thumb">
+                        <img src="/site/assets/img/impressao-folder-flyer.png" alt="Flyers e Folders" loading="lazy">
+                    </div>
+                    <div class="extra-card__body">
+                        <h4>Flyers & Folders</h4>
+                        <p>Impressão frente e verso com dobras variadas</p>
+                        <span class="extra-card__cta">Solicitar orçamento →</span>
+                    </div>
+                </a>
+
+                <a href="https://wa.me/5541991728599?text=Olá%2C+quero+um+orçamento+de+certificados." class="extra-card fade-up" target="_blank" rel="noopener">
+                    <div class="extra-card__thumb">
+                        <img src="/site/assets/img/impressao-certificado.png" alt="Certificados" loading="lazy">
+                    </div>
+                    <div class="extra-card__body">
+                        <h4>Certificados</h4>
+                        <p>Papel especial, hot-stamp e acabamentos premium</p>
+                        <span class="extra-card__cta">Solicitar orçamento →</span>
+                    </div>
+                </a>
+
+                <a href="https://wa.me/5541991728599?text=Olá%2C+quero+um+orçamento+de+blocos+e+comandas." class="extra-card fade-up" target="_blank" rel="noopener">
+                    <div class="extra-card__thumb">
+                        <img src="/site/assets/img/impressao-blocos-autocopiativos.png" alt="Blocos e Comandas" loading="lazy">
+                    </div>
+                    <div class="extra-card__body">
+                        <h4>Blocos e Comandas</h4>
+                        <p>Formulários, receituários e blocos autocopiativos</p>
+                        <span class="extra-card__cta">Solicitar orçamento →</span>
+                    </div>
+                </a>
+
+                <a href="https://wa.me/5541991728599?text=Olá%2C+quero+um+orçamento+de+cadernos+ou+agendas." class="extra-card fade-up" target="_blank" rel="noopener">
+                    <div class="extra-card__thumb">
+                        <img src="/site/assets/img/impressao-cadernos-agendas.png" alt="Cadernos e Agendas" loading="lazy">
+                    </div>
+                    <div class="extra-card__body">
+                        <h4>Cadernos & Agendas</h4>
+                        <p>Personalizados com capa e miolo sob medida</p>
+                        <span class="extra-card__cta">Solicitar orçamento →</span>
+                    </div>
+                </a>
+
+                <a href="https://wa.me/5541991728599?text=Olá%2C+quero+um+orçamento+de+acabamentos+gráficos." class="extra-card fade-up" target="_blank" rel="noopener">
+                    <div class="extra-card__thumb">
+                        <img src="/site/assets/img/impressao-laminacao-fosca-brilho.png" alt="Acabamentos Gráficos" loading="lazy">
+                    </div>
+                    <div class="extra-card__body">
+                        <h4>Acabamentos</h4>
+                        <p>Laminação, corte guilhotina, vinco e dobra</p>
+                        <span class="extra-card__cta">Solicitar orçamento →</span>
+                    </div>
+                </a>
+
             </div>
         </div>
     </div>
