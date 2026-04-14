@@ -1,8 +1,8 @@
 <?php
 /**
- * alterar/publish.php — Confirma publicação ou desfaz (restaura backup)
- * action=publish → no-op (já foi salvo pelo ai.php)
- * action=discard → restaura o backup indicado
+ * alterar/publish.php — Confirma ou desfaz alterações em arquivos de seção
+ * action=publish → no-op (arquivos já foram salvos pelo ai.php)
+ * action=discard → restaura os backups indicados
  */
 ini_set('display_errors', '0');
 error_reporting(0);
@@ -25,23 +25,51 @@ if ($action === 'publish') {
 }
 
 if ($action === 'discard') {
-    $backup_name = basename($input['backup'] ?? '');
+    $backups     = $input['backups'] ?? [];
+    $files       = $input['files']   ?? [];
+    $backup_dir  = SITE_ROOT . '/cms/paginas/backups/';
 
-    if (!$backup_name || !preg_match('/^index_\d{8}_\d{6}\.php$/', $backup_name)) {
-        echo json_encode(['ok' => false, 'error' => 'Backup inválido.']);
+    if (empty($backups) || empty($files) || count($backups) !== count($files)) {
+        echo json_encode(['ok' => false, 'error' => 'Dados de backup inválidos.']);
         exit;
     }
 
-    $backup_path = SITE_ROOT . '/cms/paginas/backups/' . $backup_name;
-    $homepage    = SITE_ROOT . '/index.php';
+    $errors = [];
+    foreach ($backups as $i => $backup_name) {
+        // Valida nome do backup (evita path traversal)
+        $backup_name = basename($backup_name);
+        if (!preg_match('/^[\w\-]+\.bak$/', $backup_name)) {
+            $errors[] = "Backup inválido: {$backup_name}";
+            continue;
+        }
 
-    if (!file_exists($backup_path)) {
-        echo json_encode(['ok' => false, 'error' => 'Arquivo de backup não encontrado.']);
-        exit;
+        $backup_path = $backup_dir . $backup_name;
+        $file_rel    = $files[$i] ?? '';
+
+        // Valida que o arquivo destino está dentro do SITE_ROOT/site/
+        $full_path = SITE_ROOT . '/' . $file_rel;
+        $real      = realpath(SITE_ROOT . '/site');
+        if (!$real || strpos(realpath(dirname($full_path)), $real) !== 0) {
+            $errors[] = "Arquivo fora do escopo permitido: {$file_rel}";
+            continue;
+        }
+
+        if (!file_exists($backup_path)) {
+            $errors[] = "Backup não encontrado: {$backup_name}";
+            continue;
+        }
+
+        if (!copy($backup_path, $full_path)) {
+            $errors[] = "Falha ao restaurar: {$file_rel}";
+        }
+
+        if (function_exists('opcache_invalidate')) {
+            opcache_invalidate($full_path, true);
+        }
     }
 
-    if (!copy($backup_path, $homepage)) {
-        echo json_encode(['ok' => false, 'error' => 'Falha ao restaurar backup.']);
+    if (!empty($errors)) {
+        echo json_encode(['ok' => false, 'error' => implode('; ', $errors)]);
         exit;
     }
 

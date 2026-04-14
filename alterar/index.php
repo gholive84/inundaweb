@@ -539,8 +539,9 @@
 
 <script>
 /* ══ Estado ══ */
-let pendingBackup = null;   // nome do arquivo de backup gerado pelo ai.php
-let locked        = false;
+let pendingBackups = [];   // array de nomes de backup gerados pelo ai.php
+let pendingFiles   = [];   // array de arquivos modificados
+let locked         = false;
 
 const msgs      = document.getElementById('msgs');
 const inp       = document.getElementById('inp');
@@ -606,7 +607,8 @@ async function sendInstruction(text) {
       addMsg('Erro: ' + (data.error || 'Falha na chamada à IA.'), 'error');
       sendBtn.disabled = false;
     } else {
-      pendingBackup = data.backup;
+      pendingBackups = data.backups || [];
+      pendingFiles   = data.files   || [];
       addMsg(data.message || 'Site atualizado! Confira o preview.', 'ai');
       // iframe aponta para o site real (já foi salvo pelo ai.php)
       frame.src = '/?t=' + Date.now();
@@ -629,9 +631,9 @@ function send() {
   if (text) sendInstruction(text);
 }
 
-/* ── Publicar (arquivo já está salvo — apenas confirma e libera) ── */
+/* ── Publicar (arquivos já estão salvos — apenas confirma e libera) ── */
 publishBtn.addEventListener('click', async () => {
-  if (!pendingBackup) return;
+  if (!pendingBackups.length) return;
   publishBtn.disabled = true;
   publishBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin .7s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg> Confirmando...';
 
@@ -645,7 +647,8 @@ publishBtn.addEventListener('click', async () => {
 
     if (data.ok) {
       addMsg('✓ Alterações confirmadas e publicadas!', 'system');
-      pendingBackup = null;
+      pendingBackups = [];
+      pendingFiles   = [];
       actions.classList.remove('on');
       status.textContent = 'Ao vivo';
       status.className = 'preview__status status--live';
@@ -661,9 +664,9 @@ publishBtn.addEventListener('click', async () => {
   publishBtn.innerHTML = '<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> Publicar';
 });
 
-/* ── Desfazer (restaura backup) ── */
+/* ── Desfazer (restaura backups) ── */
 discardBtn.addEventListener('click', async () => {
-  if (!pendingBackup) return;
+  if (!pendingBackups.length) return;
   discardBtn.disabled = true;
   discardBtn.textContent = 'Desfazendo...';
 
@@ -671,13 +674,14 @@ discardBtn.addEventListener('click', async () => {
     const res  = await fetch('/alterar/publish.php', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ action: 'discard', backup: pendingBackup })
+      body:    JSON.stringify({ action: 'discard', backups: pendingBackups, files: pendingFiles })
     });
     const data = await res.json();
 
     if (data.ok) {
       addMsg('Alterações desfeitas. Site restaurado.', 'system');
-      pendingBackup = null;
+      pendingBackups = [];
+      pendingFiles   = [];
       actions.classList.remove('on');
       frame.src = '/?t=' + Date.now();
       status.textContent = 'Ao vivo';

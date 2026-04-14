@@ -1,7 +1,7 @@
 <?php
 /**
  * alterar/ai.php — API de edição com IA (sem autenticação, demo)
- * Escreve direto no index.php após backup. Sem sessão.
+ * Lê todos os arquivos de seção, envia para o AI, escreve os modificados.
  */
 ini_set('display_errors', '0');
 error_reporting(0);
@@ -23,14 +23,6 @@ if ($instruction === '') {
     exit;
 }
 
-$homepage = SITE_ROOT . '/index.php';
-if (!file_exists($homepage)) {
-    echo json_encode(['ok' => false, 'error' => 'Homepage não encontrada.']);
-    exit;
-}
-
-$current_content = file_get_contents($homepage);
-
 $api_key = setting('openai_key', '');
 $model   = setting('openai_model', 'gpt-4o');
 
@@ -39,21 +31,58 @@ if (!$api_key) {
     exit;
 }
 
-$site_context = '';
-$ctx_file = SITE_ROOT . '/site/ai-context.txt';
-if (file_exists($ctx_file)) $site_context = trim(file_get_contents($ctx_file));
+// Arquivos que compõem a homepage (na ordem que aparecem na página)
+$section_paths = [
+    'site/includes/header.php',
+    'site/sections/hero.php',
+    'site/sections/services.php',
+    'site/sections/about.php',
+    'site/sections/portfolio.php',
+    'site/sections/clients.php',
+    'site/sections/contact.php',
+    'site/sections/cta.php',
+    'site/includes/footer.php',
+];
+
+$files = [];
+foreach ($section_paths as $rel) {
+    $full = SITE_ROOT . '/' . $rel;
+    if (file_exists($full)) {
+        $files[$rel] = file_get_contents($full);
+    }
+}
+
+if (empty($files)) {
+    echo json_encode(['ok' => false, 'error' => 'Arquivos de seção não encontrados.']);
+    exit;
+}
+
+// Monta o contexto com todos os arquivos
+$context = '';
+foreach ($files as $path => $content) {
+    $context .= "=== ARQUIVO: {$path} ===\n{$content}\n\n";
+}
 
 $system_prompt = <<<PROMPT
-Você é um desenvolvedor PHP/HTML especialista. Sua tarefa é modificar o código da homepage de um site chamado JZ Gráfica Digital, seguindo exatamente a instrução do usuário.
+Você é um desenvolvedor PHP/HTML especialista trabalhando no site JZ Gráfica Digital.
+
+O site é composto por múltiplos arquivos PHP de seção. Você receberá o conteúdo de todos eles e uma instrução de alteração.
 
 REGRAS OBRIGATÓRIAS:
-1. Retorne APENAS o código PHP modificado, sem nenhuma explicação, sem markdown, sem blocos de código.
-2. Mantenha toda a estrutura PHP existente (includes, defines, variáveis, etc.)
-3. Preserve os includes do header, sections e footer
-4. Apenas modifique o que o usuário pediu, sem alterar o restante
+1. Identifique qual(is) arquivo(s) precisam ser modificados para cumprir a instrução.
+2. Retorne APENAS os arquivos que foram modificados, no seguinte formato exato (sem markdown, sem explicações):
+
+=== ARQUIVO: caminho/do/arquivo.php ===
+[conteúdo completo do arquivo modificado]
+
+=== ARQUIVO: outro/arquivo.php ===
+[conteúdo completo do outro arquivo modificado]
+
+3. Se nenhum arquivo precisar ser alterado, retorne: NENHUMA_ALTERACAO
+4. Preserve toda a estrutura PHP existente (includes, variables, etc.)
 5. O código deve ser PHP/HTML válido
 
-Identidade visual do site JZ Cópias:
+Identidade visual JZ Gráfica:
 - Cor primária: #EB4039 (vermelho)
 - Fundo das seções: branco (#ffffff) e cinza claro (#F5F5F5)
 - Fonte: Inter
@@ -61,11 +90,7 @@ Identidade visual do site JZ Cópias:
 - Gradiente: linear-gradient(135deg, #EB4039, #C9302B)
 PROMPT;
 
-if ($site_context !== '') {
-    $system_prompt .= "\n\n" . $site_context;
-}
-
-$user_prompt = "Instrução: {$instruction}\n\nArquivo PHP atual:\n{$current_content}";
+$user_prompt = "Instrução: {$instruction}\n\nArquivos da homepage:\n\n{$context}";
 
 $payload = [
     'model'       => $model,
@@ -107,27 +132,67 @@ if ($http_code !== 200 || empty($result['choices'][0]['message']['content'])) {
     exit;
 }
 
-$modified = trim($result['choices'][0]['message']['content']);
-$modified = preg_replace('/^```php\s*/i', '', $modified);
-$modified = preg_replace('/^```\s*/i',   '', $modified);
-$modified = preg_replace('/\s*```$/i',   '', $modified);
-$modified = trim($modified);
+$ai_response = trim($result['choices'][0]['message']['content']);
 
-// Backup antes de sobrescrever
-$backup_dir = SITE_ROOT . '/cms/paginas/backups/';
-if (!is_dir($backup_dir)) @mkdir($backup_dir, 0755, true);
-$backup_name = 'index_' . date('Ymd_His') . '.php';
-$backup_path = $backup_dir . $backup_name;
-@copy($homepage, $backup_path);
-
-// Escreve direto no arquivo — o iframe vai carregar a página real
-if (file_put_contents($homepage, $modified) === false) {
-    echo json_encode(['ok' => false, 'error' => 'Não foi possível salvar o arquivo.']);
+if ($ai_response === 'NENHUMA_ALTERACAO') {
+    echo json_encode(['ok' => false, 'error' => 'A IA não identificou alterações necessárias. Tente ser mais específico.']);
     exit;
 }
 
+// Remove blocos de código markdown se o AI os incluir mesmo sendo instruído a não
+$ai_response = preg_replace('/^```[a-z]*\s*/im', '', $ai_response);
+$ai_response = preg_replace('/\s*```$/im', '', $ai_response);
+
+// Parseia o retorno: separa por "=== ARQUIVO: path ==="
+$modified_files = [];
+$pattern = '/=== ARQUIVO:\s*([^\n=]+?)\s*===/';
+preg_match_all($pattern, $ai_response, $matches, PREG_OFFSET_CAPTURE);
+
+for ($i = 0; $i < count($matches[1]); $i++) {
+    $file_rel  = trim($matches[1][$i][0]);
+    $start_pos = $matches[0][$i][1] + strlen($matches[0][$i][0]);
+    $end_pos   = isset($matches[0][$i + 1]) ? $matches[0][$i + 1][1] : strlen($ai_response);
+    $content   = trim(substr($ai_response, $start_pos, $end_pos - $start_pos));
+
+    // Valida que o arquivo está na lista permitida
+    if (array_key_exists($file_rel, $files)) {
+        $modified_files[$file_rel] = $content;
+    }
+}
+
+if (empty($modified_files)) {
+    echo json_encode(['ok' => false, 'error' => 'Não foi possível identificar os arquivos alterados na resposta da IA.']);
+    exit;
+}
+
+// Backup e gravação dos arquivos modificados
+$backup_dir = SITE_ROOT . '/cms/paginas/backups/';
+if (!is_dir($backup_dir)) @mkdir($backup_dir, 0755, true);
+
+$backup_stamp = date('Ymd_His');
+$backed_up    = [];
+
+foreach ($modified_files as $rel => $new_content) {
+    $full_path   = SITE_ROOT . '/' . $rel;
+    $backup_name = str_replace('/', '_', $rel) . '_' . $backup_stamp . '.bak';
+    $backup_path = $backup_dir . $backup_name;
+
+    @copy($full_path, $backup_path);
+    $backed_up[] = $backup_name;
+
+    file_put_contents($full_path, $new_content);
+
+    // Invalida OPcache se disponível
+    if (function_exists('opcache_invalidate')) {
+        opcache_invalidate($full_path, true);
+    }
+}
+
+$files_changed = implode(', ', array_keys($modified_files));
+
 echo json_encode([
     'ok'      => true,
-    'backup'  => $backup_name,
-    'message' => 'Site atualizado! Confira o preview ao lado. Se gostar, clique em Publicar — ou Desfazer para voltar.',
+    'backups' => $backed_up,
+    'files'   => array_keys($modified_files),
+    'message' => 'Site atualizado! (' . count($modified_files) . ' arquivo(s) modificado(s)). Confira o preview e publique.',
 ]);
