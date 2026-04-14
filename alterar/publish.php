@@ -1,6 +1,8 @@
 <?php
 /**
- * alterar/publish.php — Publica as alterações da homepage (sem autenticação, demo)
+ * alterar/publish.php — Confirma publicação ou desfaz (restaura backup)
+ * action=publish → no-op (já foi salvo pelo ai.php)
+ * action=discard → restaura o backup indicado
  */
 ini_set('display_errors', '0');
 error_reporting(0);
@@ -14,25 +16,37 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$input   = json_decode(file_get_contents('php://input'), true) ?? [];
-$content = $input['content'] ?? '';
+$input  = json_decode(file_get_contents('php://input'), true) ?? [];
+$action = $input['action'] ?? 'publish';
 
-if (trim($content) === '') {
-    echo json_encode(['ok' => false, 'error' => 'Conteúdo vazio.']);
+if ($action === 'publish') {
+    echo json_encode(['ok' => true]);
     exit;
 }
 
-$homepage = SITE_ROOT . '/index.php';
+if ($action === 'discard') {
+    $backup_name = basename($input['backup'] ?? '');
 
-// Backup antes de sobrescrever
-$backup_dir = SITE_ROOT . '/cms/paginas/backups/';
-if (!is_dir($backup_dir)) @mkdir($backup_dir, 0755, true);
-$backup = $backup_dir . 'index_' . date('Ymd_His') . '.php';
-@copy($homepage, $backup);
+    if (!$backup_name || !preg_match('/^index_\d{8}_\d{6}\.php$/', $backup_name)) {
+        echo json_encode(['ok' => false, 'error' => 'Backup inválido.']);
+        exit;
+    }
 
-if (file_put_contents($homepage, $content) === false) {
-    echo json_encode(['ok' => false, 'error' => 'Não foi possível salvar o arquivo.']);
+    $backup_path = SITE_ROOT . '/cms/paginas/backups/' . $backup_name;
+    $homepage    = SITE_ROOT . '/index.php';
+
+    if (!file_exists($backup_path)) {
+        echo json_encode(['ok' => false, 'error' => 'Arquivo de backup não encontrado.']);
+        exit;
+    }
+
+    if (!copy($backup_path, $homepage)) {
+        echo json_encode(['ok' => false, 'error' => 'Falha ao restaurar backup.']);
+        exit;
+    }
+
+    echo json_encode(['ok' => true]);
     exit;
 }
 
-echo json_encode(['ok' => true]);
+echo json_encode(['ok' => false, 'error' => 'Ação desconhecida.']);

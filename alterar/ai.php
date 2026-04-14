@@ -1,7 +1,7 @@
 <?php
 /**
  * alterar/ai.php — API de edição com IA (sem autenticação, demo)
- * Opera exclusivamente sobre o index.php da homepage.
+ * Escreve direto no index.php após backup. Sem sessão.
  */
 ini_set('display_errors', '0');
 error_reporting(0);
@@ -23,7 +23,6 @@ if ($instruction === '') {
     exit;
 }
 
-// Arquivo fixo: homepage
 $homepage = SITE_ROOT . '/index.php';
 if (!file_exists($homepage)) {
     echo json_encode(['ok' => false, 'error' => 'Homepage não encontrada.']);
@@ -40,7 +39,6 @@ if (!$api_key) {
     exit;
 }
 
-// Contexto do site JZ Cópias
 $site_context = '';
 $ctx_file = SITE_ROOT . '/site/ai-context.txt';
 if (file_exists($ctx_file)) $site_context = trim(file_get_contents($ctx_file));
@@ -115,19 +113,21 @@ $modified = preg_replace('/^```\s*/i',   '', $modified);
 $modified = preg_replace('/\s*```$/i',   '', $modified);
 $modified = trim($modified);
 
-// Salva preview em sessão
-if (session_status() === PHP_SESSION_NONE) session_start();
-$token = bin2hex(random_bytes(16));
-$_SESSION['ai_preview'][$token] = [
-    'content'   => $modified,
-    'page_id'   => 0,
-    'file_path' => $homepage,
-    'expires'   => time() + 3600,
-];
+// Backup antes de sobrescrever
+$backup_dir = SITE_ROOT . '/cms/paginas/backups/';
+if (!is_dir($backup_dir)) @mkdir($backup_dir, 0755, true);
+$backup_name = 'index_' . date('Ymd_His') . '.php';
+$backup_path = $backup_dir . $backup_name;
+@copy($homepage, $backup_path);
+
+// Escreve direto no arquivo — o iframe vai carregar a página real
+if (file_put_contents($homepage, $modified) === false) {
+    echo json_encode(['ok' => false, 'error' => 'Não foi possível salvar o arquivo.']);
+    exit;
+}
 
 echo json_encode([
-    'ok'            => true,
-    'preview_token' => $token,
-    'content'       => $modified,
-    'message'       => 'Alterações prontas! Confira o preview e publique se estiver satisfeito.',
+    'ok'      => true,
+    'backup'  => $backup_name,
+    'message' => 'Site atualizado! Confira o preview ao lado. Se gostar, clique em Publicar — ou Desfazer para voltar.',
 ]);

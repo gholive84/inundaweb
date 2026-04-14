@@ -517,7 +517,7 @@
           <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
           Publicar
         </button>
-        <button class="btn-action btn-discard" id="discardBtn">Descartar</button>
+        <button class="btn-action btn-discard" id="discardBtn">Desfazer</button>
       </div>
     </div>
 
@@ -539,8 +539,8 @@
 
 <script>
 /* ══ Estado ══ */
-let pendingContent = null;
-let locked         = false;
+let pendingBackup = null;   // nome do arquivo de backup gerado pelo ai.php
+let locked        = false;
 
 const msgs      = document.getElementById('msgs');
 const inp       = document.getElementById('inp');
@@ -578,15 +578,14 @@ function setLocked(val) {
   sendBtn.disabled = val;
   inp.disabled = val;
   inp.placeholder = val
-    ? 'Publique ou descarte antes de enviar um novo pedido.'
+    ? 'Publique ou desfaça antes de enviar um novo pedido.'
     : 'Ex: Mude o título para "A melhor gráfica de Curitiba"...';
   if (!val) inp.focus();
 }
 
-/* ── Enviar instrução ── */
-async function send() {
-  const text = inp.value.trim();
-  if (!text || locked || sendBtn.disabled) return;
+/* ── Enviar instrução (aceita texto diretamente para uso do áudio) ── */
+async function sendInstruction(text) {
+  if (!text || locked) return;
 
   addMsg(text, 'user');
   inp.value = '';
@@ -607,9 +606,10 @@ async function send() {
       addMsg('Erro: ' + (data.error || 'Falha na chamada à IA.'), 'error');
       sendBtn.disabled = false;
     } else {
-      pendingContent = data.content;
-      addMsg(data.message || 'Alterações prontas! Veja o preview e publique.', 'ai');
-      frame.src = '/cms/paginas/preview.php?token=' + encodeURIComponent(data.preview_token) + '&t=' + Date.now();
+      pendingBackup = data.backup;
+      addMsg(data.message || 'Site atualizado! Confira o preview.', 'ai');
+      // iframe aponta para o site real (já foi salvo pelo ai.php)
+      frame.src = '/?t=' + Date.now();
       status.textContent = 'Modificado';
       status.className = 'preview__status status--modified';
       actions.classList.add('on');
@@ -623,48 +623,75 @@ async function send() {
   }
 }
 
-/* ── Publicar ── */
+/* ── Wrapper para o botão Enviar ── */
+function send() {
+  const text = inp.value.trim();
+  if (text) sendInstruction(text);
+}
+
+/* ── Publicar (arquivo já está salvo — apenas confirma e libera) ── */
 publishBtn.addEventListener('click', async () => {
-  if (!pendingContent) return;
+  if (!pendingBackup) return;
   publishBtn.disabled = true;
-  publishBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin .7s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg> Publicando...';
+  publishBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin .7s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg> Confirmando...';
 
   try {
     const res  = await fetch('/alterar/publish.php', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ content: pendingContent })
+      body:    JSON.stringify({ action: 'publish' })
     });
     const data = await res.json();
 
     if (data.ok) {
-      addMsg('✓ Página publicada com sucesso!', 'system');
-      pendingContent = null;
+      addMsg('✓ Alterações confirmadas e publicadas!', 'system');
+      pendingBackup = null;
       actions.classList.remove('on');
-      frame.src = '/?t=' + Date.now();
       status.textContent = 'Ao vivo';
       status.className = 'preview__status status--live';
       setLocked(false);
     } else {
-      addMsg('Erro ao publicar: ' + (data.error || ''), 'error');
+      addMsg('Erro: ' + (data.error || ''), 'error');
     }
   } catch (e) {
-    addMsg('Erro de conexão ao publicar.', 'error');
+    addMsg('Erro de conexão.', 'error');
   }
 
   publishBtn.disabled = false;
   publishBtn.innerHTML = '<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> Publicar';
 });
 
-/* ── Descartar ── */
-discardBtn.addEventListener('click', () => {
-  pendingContent = null;
-  actions.classList.remove('on');
-  frame.src = '/?t=' + Date.now();
-  status.textContent = 'Ao vivo';
-  status.className = 'preview__status status--live';
-  addMsg('Alterações descartadas.', 'system');
-  setLocked(false);
+/* ── Desfazer (restaura backup) ── */
+discardBtn.addEventListener('click', async () => {
+  if (!pendingBackup) return;
+  discardBtn.disabled = true;
+  discardBtn.textContent = 'Desfazendo...';
+
+  try {
+    const res  = await fetch('/alterar/publish.php', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ action: 'discard', backup: pendingBackup })
+    });
+    const data = await res.json();
+
+    if (data.ok) {
+      addMsg('Alterações desfeitas. Site restaurado.', 'system');
+      pendingBackup = null;
+      actions.classList.remove('on');
+      frame.src = '/?t=' + Date.now();
+      status.textContent = 'Ao vivo';
+      status.className = 'preview__status status--live';
+      setLocked(false);
+    } else {
+      addMsg('Erro ao desfazer: ' + (data.error || ''), 'error');
+    }
+  } catch (e) {
+    addMsg('Erro de conexão.', 'error');
+  }
+
+  discardBtn.disabled = false;
+  discardBtn.textContent = 'Desfazer';
 });
 
 /* ── Sugestões rápidas ── */
@@ -805,7 +832,7 @@ function stopRec() {
 }
 
 async function transcribe(blob, ext) {
-  const procMsg = addMsg('🎙️ Transcrevendo áudio...', 'system');
+  const procMsg = addMsg('🎙️ Processando áudio...', 'system');
 
   try {
     const fd = new FormData();
@@ -815,24 +842,25 @@ async function transcribe(blob, ext) {
     const data = await res.json();
     procMsg.remove();
 
+    micBtn.classList.remove('btn-mic--proc');
+    micBtn.disabled  = false;
+    micBtn.title     = 'Gravar áudio';
+    micBtn.innerHTML = SVG_MIC;
+
     if (data.ok && data.text) {
-      inp.value = data.text;
-      inp.style.height = 'auto';
-      inp.style.height = Math.min(inp.scrollHeight, 120) + 'px';
-      inp.focus();
-      inp.select();
+      // Envia direto para a IA sem exibir o texto no textarea
+      await sendInstruction(data.text);
     } else {
       addMsg('Erro na transcrição: ' + (data.error || 'Tente novamente.'), 'error');
     }
   } catch (err) {
     procMsg.remove();
+    micBtn.classList.remove('btn-mic--proc');
+    micBtn.disabled  = false;
+    micBtn.title     = 'Gravar áudio';
+    micBtn.innerHTML = SVG_MIC;
     addMsg('Erro ao enviar áudio: ' + err.message, 'error');
   }
-
-  micBtn.classList.remove('btn-mic--proc');
-  micBtn.disabled  = false;
-  micBtn.title     = 'Gravar áudio';
-  micBtn.innerHTML = SVG_MIC;
 }
 </script>
 </body>
