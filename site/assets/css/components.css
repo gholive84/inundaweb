@@ -191,8 +191,8 @@
 }
 
 .header.scrolled .logo__img {
-    /* logo colorida original no header branco */
-    filter: none;
+    /* logo preta no header branco */
+    filter: brightness(0);
 }
 
 /* texto logo fallback */
