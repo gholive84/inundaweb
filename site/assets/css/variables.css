@@ -1,24 +1,24 @@
 :root {
-    /* Brand accent — laranja gráfica */
-    --e-global-color-ec3c7a7: #F97316;
-    --e-global-color-3ee16e7: #EA580C;
+    /* Brand accent — vermelho JZ */
+    --e-global-color-ec3c7a7: #EB4039;
+    --e-global-color-3ee16e7: #C9302B;
 
     /* Gradient shorthand */
-    --gradient-accent: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
+    --gradient-accent: linear-gradient(135deg, #EB4039 0%, #C9302B 100%);
 
     /* Colors */
-    --color-primary: #F97316;
-    --color-primary-dark: #EA580C;
-    --color-accent: #F97316;
-    --color-accent-dark: #EA580C;
-    --color-dark: #0f172a;
-    --color-dark-2: #1e293b;
-    --color-light: #f8fafc;
+    --color-primary: #EB4039;
+    --color-primary-dark: #C9302B;
+    --color-accent: #EB4039;
+    --color-accent-dark: #C9302B;
+    --color-dark: #1a1a1a;
+    --color-dark-2: #F5F5F5;    /* seções claras alternadas */
+    --color-light: #F8F8F8;
     --color-white: #ffffff;
-    --color-text: #0f172a;
+    --color-text: #1a1a1a;
     --color-muted: #64748b;
     --color-border: #e2e8f0;
-    --color-border-dark: rgba(255,255,255,0.08);
+    --color-border-dark: rgba(0,0,0,0.08);
 
     /* Typography */
     --font-base: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -35,7 +35,7 @@
 
     /* Shadows */
     --shadow-card: 0 4px 24px rgba(0,0,0,0.06);
-    --shadow-card-dark: 0 4px 24px rgba(0,0,0,0.2);
+    --shadow-card-dark: 0 4px 24px rgba(0,0,0,0.12);
     --shadow-hero: 0 24px 64px rgba(0,0,0,0.2);
 
     /* Transitions */

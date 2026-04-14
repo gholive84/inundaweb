@@ -7,7 +7,7 @@
                 Desde 1997 a JZ Gráfica é referência em impressão em Curitiba. Começamos com offset e crescemos para o digital, UV e corte a laser — sempre com o mesmo compromisso: entregar o melhor produto no prazo certo.
             </p>
             <p class="about__text">
-                Atendemos desde o autônomo que precisa de 100 cartões até grandes empresas que demandam tiragens industriais e materiais de comunicação visual. Qualidade e agilidade para todos.
+                Atendemos desde o autônomo que precisa de 100 cartões até grandes empresas com tiragens industriais e materiais de comunicação visual completa. Qualidade e agilidade para todos.
             </p>
             <div class="about__values">
                 <div class="value">

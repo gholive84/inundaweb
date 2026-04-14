@@ -2,8 +2,8 @@
     <div class="container">
         <div class="section-header">
             <span class="label">Fale Conosco</span>
-            <h2 class="section-title text--white">Pronto para <span class="text--gradient">seu orçamento</span>?</h2>
-            <p class="section-subtitle text--muted-dark">Entre em contato pelo WhatsApp, telefone ou preencha o formulário. Respondemos rápido!</p>
+            <h2 class="section-title">Pronto para <span class="text--accent">seu orçamento</span>?</h2>
+            <p class="section-subtitle">Entre em contato pelo WhatsApp, telefone ou preencha o formulário. Respondemos rápido!</p>
         </div>
 
         <div class="contact__inner">
@@ -45,7 +45,7 @@
                     </div>
                     <div>
                         <h4>WhatsApp</h4>
-                        <a href="https://wa.me/5541991728599?text=Olá! Gostaria de solicitar um orçamento." target="_blank" rel="noopener">(41) 9 9172-8599</a>
+                        <a href="https://wa.me/5541991728599?text=Olá%2C+gostaria+de+solicitar+um+orçamento." target="_blank" rel="noopener">(41) 9 9172-8599</a>
                     </div>
                 </div>
                 <div class="contact-info-item">

@@ -4,19 +4,43 @@
     </div>
     <div class="clients__carousel-wrapper">
         <div class="clients__track">
-            <div class="client-logo"><span>Shopping Estação</span></div>
-            <div class="client-logo"><span>Renner</span></div>
-            <div class="client-logo"><span>Montana</span></div>
-            <div class="client-logo"><span>McDonald's</span></div>
-            <div class="client-logo"><span>Boticário</span></div>
-            <div class="client-logo"><span>Grupo Positivo</span></div>
+            <div class="client-logo">
+                <img src="/site/assets/img/shoping-estacao.png" alt="Shopping Estação" loading="lazy">
+            </div>
+            <div class="client-logo">
+                <img src="/site/assets/img/renner.png" alt="Renner" loading="lazy">
+            </div>
+            <div class="client-logo">
+                <img src="/site/assets/img/montana.png" alt="Montana" loading="lazy">
+            </div>
+            <div class="client-logo">
+                <img src="/site/assets/img/mcdonalds.png" alt="McDonald's" loading="lazy">
+            </div>
+            <div class="client-logo">
+                <img src="/site/assets/img/cliente-autopark.png" alt="Autopark" loading="lazy">
+            </div>
+            <div class="client-logo">
+                <img src="/site/assets/img/icac.png" alt="ICAC" loading="lazy">
+            </div>
             <!-- duplicados para loop contínuo -->
-            <div class="client-logo" aria-hidden="true"><span>Shopping Estação</span></div>
-            <div class="client-logo" aria-hidden="true"><span>Renner</span></div>
-            <div class="client-logo" aria-hidden="true"><span>Montana</span></div>
-            <div class="client-logo" aria-hidden="true"><span>McDonald's</span></div>
-            <div class="client-logo" aria-hidden="true"><span>Boticário</span></div>
-            <div class="client-logo" aria-hidden="true"><span>Grupo Positivo</span></div>
+            <div class="client-logo" aria-hidden="true">
+                <img src="/site/assets/img/shoping-estacao.png" alt="" loading="lazy">
+            </div>
+            <div class="client-logo" aria-hidden="true">
+                <img src="/site/assets/img/renner.png" alt="" loading="lazy">
+            </div>
+            <div class="client-logo" aria-hidden="true">
+                <img src="/site/assets/img/montana.png" alt="" loading="lazy">
+            </div>
+            <div class="client-logo" aria-hidden="true">
+                <img src="/site/assets/img/mcdonalds.png" alt="" loading="lazy">
+            </div>
+            <div class="client-logo" aria-hidden="true">
+                <img src="/site/assets/img/cliente-autopark.png" alt="" loading="lazy">
+            </div>
+            <div class="client-logo" aria-hidden="true">
+                <img src="/site/assets/img/icac.png" alt="" loading="lazy">
+            </div>
         </div>
     </div>
 </section>
